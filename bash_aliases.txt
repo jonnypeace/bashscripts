@@ -1,4 +1,4 @@
-# remember to cp bash_aliases.txt ~/.bash_aliases && source .bash_aliases
+# remember to cp bash_aliases.txt ~/.bash_aliases && source ~/.bash_aliases
 
 alias lis='ls -AlhF'
 alias dua='du -hcad 1'
