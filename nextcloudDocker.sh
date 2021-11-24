@@ -11,13 +11,13 @@
 #sudo iptables -I DOCKER-USER -i eth0 ! -s my.ip.add.ress -j DROP
 #eth0 might be different, so check your interfaces, ip link show, or ip a.
 #The ! -s iptables command inverts the rule and allows only that single IP through, so if you have a method such as my update_dyndns.sh script
-# in this repo, then you could automate this in your firewall rules, but you will also need to make the rules persistent (google).
+#in this repo, then you could automate this in your firewall rules, but you will also need to make the rules persistent (google).
 #Over time if you use automation for the firewall rule, you might want to clean up your iptables, as only the top entry for DOCKER-USER will be obeyed.
-#You can add a range of IP addresses, but my use is in the cloud, for single person/IP use. Could probably get this to work through a wireguard
-#range of local IP's as a work around. I have a few set ups, and only need the one IP.
-#I found it difficult to get docker to obey my wireguard firewall rules, hence you'll see a
-#Wireguard script somewhere in here for bare metal wireguard, which helps a lot when adding new users.
-#Be wary, i believe some docker images don't persist with your data.
+#You can add a range of IP addresses or subnet, but my use is in the cloud, for single IP use. 
+#You could probably get this to work through a wireguard range of local IP's as a work around and accessed via wireguard on the nextcloud server. 
+#I have a few set ups, and only need the one IP. I found it difficult to get docker to obey my wireguard firewall rules, hence you'll see a
+#wireguard script somewhere in here for bare metal wireguard, which helps a lot when adding new users.
+#Be wary, i believe some docker images don't persist your data.
 
 answer=$(sudo docker ps -a | grep nextcloud | awk '{print $1}')
 
