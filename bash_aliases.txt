@@ -1,0 +1,8 @@
+# remember to cp bash_aliases.txt ~/.bash_aliases && source .bash_aliases
+
+alias lis='ls -AlhF'
+alias dua='du -hcad 1'
+alias hdd='lsblk -o +MODEL,SERIAL'
+alias sup='sudo apt-get update && sudo apt-get upgrade -y'
+alias nanov='nano -lv'
+alias nanoe='nano -il'
