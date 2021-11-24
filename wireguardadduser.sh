@@ -31,9 +31,11 @@ echo "$name has been added to wireguard,config file located /etc/wireguard/confi
 
 ######Some configurations######
 #ufw route allow in on wg0 out on eth0 from 10.6.0.0/24
-#nano /etc/sysctl.conf and uncomment net.ipv4.ip_forward=1
-#add the below 3 lines to [interface] of wg0.conf
-########
+#nano -l +28 /etc/sysctl.conf and uncomment net.ipv4.ip_forward=1 for debian it's line 28.
+#add the below 3 lines to [interface] of wg0.conf. This might be optional, i've not needed this with raspbian, but for a Linode Debian server i have
+#needed to add these lines.
+######################################
 #SaveConfig = true
 #PostUp = iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 #PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
+######################################
