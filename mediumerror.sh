@@ -6,7 +6,7 @@
 medtemp=$(mktemp -t medtemp.XXXXXX)
 
 #Baseline file to compare data against.
-read -p "Create baseline data? y/n : " ans
+read -p "Create baseline data? Warning, will recreate baseline data file with present data [y/n] : " ans
 smartctl --scan
 read -p "Start drive number, i.e. /dev/pass2. 2 would be the start number: " start
 read -p "Last drive number, i.e /dev/pass5. 5 would be the last number: " last
