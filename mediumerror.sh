@@ -1,12 +1,23 @@
 #!/usr/bin/env bash
 
+#Script written for TrueNAS
+
+#Create empty file to store present data
 echo '' > medtemp.txt
 cat /dev/null > medtemp.txt
 
-a=1
+#Baseline file to compare data against.
+read -p "Create baseline data? y/n : " ans
+read -p "Start drive number, i.e. /dev/pass2. 2 would be the start numnber: " start
+read -p "Last drive number, i.e /dev/pass5. 5 would be the last number: " last
+if [[ $ans =~ ^(yes|y)$ ]]; then
+	for ((i=$start; i<=$last; i++)); do 
+	smartctl -a /dev/pass$i | grep "Serial number" >> medtemp.txt; smartctl -a /dev/pass$i | grep "Non-medium error" >> serialMediumErrors.txt
+	done
+fi
+
 for ((i=2; i<=5; i++)); do 
 	smartctl -a /dev/pass$i | grep "Serial number" >> medtemp.txt; smartctl -a /dev/pass$i | grep "Non-medium error" >> medtemp.txt
-	a=$((a+1))
 done
 
 #Check previous disk health
