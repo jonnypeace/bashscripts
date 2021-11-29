@@ -36,7 +36,6 @@ for ((i=$start; i<="$maxnum"; i=i+2)); do
 		echo "***** disk $serial medium error count has increased by $diff *****"; else
 		echo "disk $serial medium errors are ok"
 	fi
-	a=$((a+1))
 done
 
 rm $medtemp
