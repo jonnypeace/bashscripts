@@ -7,28 +7,26 @@ medtemp=$(mktemp -t medtemp.XXXXXX)
 
 #Baseline file to compare data against.
 read -p "Create baseline data? y/n : " ans
+smartctl --scan
+read -p "Start drive number, i.e. /dev/pass2. 2 would be the start number: " start
+read -p "Last drive number, i.e /dev/pass5. 5 would be the last number: " last
+
 if [[ $ans =~ ^(yes|y)$ ]]; then
 	echo '' > serialMediumErrors.txt
 	cat /dev/null > serialMediumErrors.txt
-	read -p "Start drive number, i.e. /dev/pass2. 2 would be the start numnber: " start
-	read -p "Last drive number, i.e /dev/pass5. 5 would be the last number: " last
 	for ((i=$start; i<=$last; i++)); do
 	smartctl -a /dev/pass$i | grep "Serial number" >> serialMediumErrors.txt; smartctl -a /dev/pass$i | grep "Non-medium error" >> serialMediumErrors.txt
 	done
 fi
 
-read -p "Number of drives to check? " num
-maxnum=$(( $num+1 ))
-
-for ((i=2; i<="$maxnum"; i++)); do 
+for ((i=$start; i<=$last; i++)); do 
 	smartctl -a /dev/pass$i | grep "Serial number" >> $medtemp; smartctl -a /dev/pass$i | grep "Non-medium error" >> $medtemp
 done
 
 #Check previous disk health
-maxnum=$(( $num*2 ))
+maxnum=$(( ("$start"-"$last"+1)*2 ))
 
-a=2
-for ((i=2; i<="$maxnum"; i=i+2)); do
+for ((i=$start; i<="$maxnum"; i=i+2)); do
 	disk=$(awk "NR==$i"'{print $4}' serialMediumErrors.txt)
 	diskC=$(awk "NR==$i"'{print $4}' $medtemp)
 	scalc=$(( $i-1 ))
