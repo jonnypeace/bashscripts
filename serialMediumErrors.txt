@@ -1,8 +1,0 @@
-Serial number:        6SKEWOKD0000N5010MKG
-Non-medium error count:      434
-Serial number:        6DFWDDEE0000N502719X
-Non-medium error count:      149
-Serial number:        6EWSFEFW0000N50276QM
-Non-medium error count:       15
-Serial number:        ZAADEEWF
-Non-medium error count:        0
