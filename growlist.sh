@@ -2,12 +2,8 @@
 
 #Script written for TrueNAS
 
-#Create empty file to store present data
-#temporary files
+#temporary file for present data
 growtemp=$(mktemp -t growtemp.XXXXXX)
-
-#echo '' > growtemp.txt
-#cat /dev/null > growtemp.txt
 
 #Baseline file to compare data against.
 read -p "Create baseline data? Warning, will recreate baseline data file with present data [y/n] : " ans
