@@ -2,8 +2,7 @@
 
 #Script written for TrueNAS
 
-#Create empty file to store present data
-#temporary files
+#temporary files for present data
 medtemp=$(mktemp -t medtemp.XXXXXX)
 
 #Baseline file to compare data against.
