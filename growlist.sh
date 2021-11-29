@@ -12,7 +12,6 @@ read -p "Start drive number, i.e. /dev/pass2. 2 would be the start number: " sta
 read -p "Last drive number, i.e /dev/pass5. 5 would be the last number: " last
 
 if [[ $ans =~ ^(yes|y)$ ]]; then
-	echo '' > growlist.txt
 	cat /dev/null > growlist.txt
 	for ((i=$start; i<=$last; i++)); do
 	smartctl -a /dev/pass$i | grep "Serial number" >> growlist.txt; smartctl -a /dev/pass$i | grep -i "Elements in grown defect list" >> growlist.txt
