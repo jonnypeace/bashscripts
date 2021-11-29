@@ -17,6 +17,7 @@ if [[ $ans =~ ^(yes|y)$ ]]; then
 	for ((i=$start; i<=$last; i++)); do
 	smartctl -a /dev/pass$i | grep "Serial number" >> serialMediumErrors.txt; smartctl -a /dev/pass$i | grep "Non-medium error" >> serialMediumErrors.txt
 	done
+	exit 0
 fi
 
 for ((i=$start; i<=$last; i++)); do 
