@@ -17,14 +17,18 @@ if [[ $ans =~ ^(yes|y)$ ]]; then
 	done
 fi
 
-for ((i=2; i<=5; i++)); do 
+read -p "Number of drives to check? " num
+maxnum=$(( $num+1 ))
+
+for ((i=2; i<="$maxnum"; i++)); do 
 	smartctl -a /dev/pass$i | grep "Serial number" >> $medtemp; smartctl -a /dev/pass$i | grep "Non-medium error" >> $medtemp
 done
 
 #Check previous disk health
+maxnum=$(( $num*2 ))
 
 a=2
-for ((i=2; i<=8; i=i+2)); do
+for ((i=2; i<="$maxnum"; i=i+2)); do
 	disk=$(awk "NR==$i"'{print $4}' serialMediumErrors.txt)
 	diskC=$(awk "NR==$i"'{print $4}' $medtemp)
 	scalc=$(( $i-1 ))
