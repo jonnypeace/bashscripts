@@ -6,13 +6,16 @@
 echo '' > medtemp.txt
 cat /dev/null > medtemp.txt
 
-#Baseline file to compare data against.
-read -p "Create baseline data? y/n : " ans
-read -p "Start drive number, i.e. /dev/pass2. 2 would be the start numnber: " start
-read -p "Last drive number, i.e /dev/pass5. 5 would be the last number: " last
+#Present Baseline file to compare data against.
+read -p "Create baseline data? Warning, will recreate baseline data file with present data [y/n] : " ans
 if [[ $ans =~ ^(yes|y)$ ]]; then
-	for ((i=$start; i<=$last; i++)); do 
-	smartctl -a /dev/pass$i | grep "Serial number" >> medtemp.txt; smartctl -a /dev/pass$i | grep "Non-medium error" >> serialMediumErrors.txt
+	echo '' > serialMediumErrors.txt
+	cat /dev/null > serialMediumErrors.txt
+	smartctl --scan
+	read -p "Start drive number, i.e. /dev/pass2. 2 would be the start numnber: " start
+	read -p "Last drive number, i.e /dev/pass5. 5 would be the last number: " last
+	for ((i=$start; i<=$last; i++)); do
+	smartctl -a /dev/pass$i | grep "Serial number" >> serialMediumErrors.txt; smartctl -a /dev/pass$i | grep "Non-medium error" >> serialMediumErrors.txt
 	done
 fi
 
