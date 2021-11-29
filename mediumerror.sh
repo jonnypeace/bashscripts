@@ -25,9 +25,9 @@ for ((i=$start; i<=$last; i++)); do
 done
 
 #Check previous disk health
-maxnum=$(( ("$start"-"$last"+1)*2 ))
+maxnum=$(( ($start-$last+1)*2 ))
 
-for ((i=$start; i<="$maxnum"; i=i+2)); do
+for ((i=$start; i<=$maxnum; i=i+2)); do
 	disk=$(awk "NR==$i"'{print $4}' serialMediumErrors.txt)
 	diskC=$(awk "NR==$i"'{print $4}' $medtemp)
 	scalc=$(( $i-1 ))
