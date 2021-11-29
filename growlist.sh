@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#Script written for TrueNAS
+#Script written for TrueNAS and SAS drives
 
 #Create empty file to store present data
 echo '' > growtemp.txt
