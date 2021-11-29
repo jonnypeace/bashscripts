@@ -26,7 +26,7 @@ done
 
 #Check previous disk health
 maxnum=$(( ($last-$start+1)*2 ))
-for ((i=$start; i<="$maxnum"; i=i+2)); do
+for ((i=$start; i<=$maxnum; i=i+2)); do
 	disk=$(awk "NR==$i"'{print $6}' growlist.txt)
 	diskC=$(awk "NR==$i"'{print $6}' $growtemp)
 	scalc=$(( $i-1 ))
