@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#Script written for TrueNAS
+#Script written for TrueNAS & SAS drives to check for Elements in grown defect list, create a baseline and compare against present data.
 
 #temporary files for present data
 medtemp=$(mktemp -t medtemp.XXXXXX)
