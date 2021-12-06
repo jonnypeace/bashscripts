@@ -9,6 +9,9 @@
 #lastly, you'll need the server keys, and the publickey which is added to line 23.
 ##umask 077; wg genkey | tee privatekey | wg pubkey > publickey
 
+#ubuntu server doesn't allow the edit of the wg0.conf file unless wireguard service has stopped running.
+systemctl stop wg-quick@wg0
+
 read -p "Enter peer name: " name
 read -p "Enter subnet last digit: " num
 umask 077
@@ -25,7 +28,7 @@ echo -e "[Interface]\nPrivateKey = $priv\nAddress = 10.6.0.$num/24\nListenPort =
 pub=$(cat $name'_pub')
 echo -e "###$name###\n[peer]\nPublicKey = $pub\nPresharedKey = $psk\nAllowedIPs = 10.6.0.$num/32\n###end $name###" >> /etc/wireguard/wg0.conf
 
-systemctl restart wg-quick@wg0
+systemctl start wg-quick@wg0
 
 echo "$name has been added to wireguard,config file located /etc/wireguard/configs"
 
