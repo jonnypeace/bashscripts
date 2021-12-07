@@ -45,7 +45,7 @@ fi
 #add the below 3 lines to [interface] of wg0.conf. This might be optional, i've not needed this with raspbian, but for a Linode Debian server i have
 #needed to add these lines.
 ######################################
-#SaveConfig = true
+#SaveConfig = true (optional? Seems to store your connection IP in config)
 #PostUp = iptables -A FORWARD -i wg0 -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 #PostDown = iptables -D FORWARD -i wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
 ######################################
