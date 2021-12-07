@@ -10,27 +10,34 @@
 ##umask 077; wg genkey | tee privatekey | wg pubkey > publickey
 
 #ubuntu server doesn't allow the edit of the wg0.conf file unless wireguard service has stopped running.
-systemctl stop wg-quick@wg0
+read -p "Warning, this script will halt your wireguard server while adding new users. Proceed? [y/n]? " ans
 
-read -p "Enter peer name: " name
-read -p "Enter subnet last digit: " num
-umask 077
-wg genkey | tee $name'_priv' | wg pubkey > $name'_pub'
-umask 077
-wg genpsk > $name'_psk'
-priv=$(cat $name'_priv')
-psk=$(cat $name'_psk')
+if [[ $ans =~ ^(yes|y)$ ]]; then
 
-touch /etc/wireguard/configs/$name'.conf'
+  systemctl stop wg-quick@wg0
+  read -p "Enter peer name: " name
+  read -p "Enter subnet last digit: " num
+  umask 077
+  wg genkey | tee $name'_priv' | wg pubkey > $name'_pub'
+  umask 077
+  wg genpsk > $name'_psk'
+  priv=$(cat $name'_priv')
+  psk=$(cat $name'_psk')
 
-echo -e "[Interface]\nPrivateKey = $priv\nAddress = 10.6.0.$num/24\nListenPort = 51820\nDNS = 9.9.9.9\n[Peer]\nPublicKey = XXXXXXXXXXXXXXXXXXXX\nPresharedKey = $psk\nEndpoint = MYDNS.ORMY.IP:51820\nAllowedIPs = 0.0.0.0/0, ::0/0" >> /etc/wireguard/configs/$name'.conf'
+  touch /etc/wireguard/configs/$name'.conf'
 
-pub=$(cat $name'_pub')
-echo -e "###$name###\n[peer]\nPublicKey = $pub\nPresharedKey = $psk\nAllowedIPs = 10.6.0.$num/32\n###end $name###" >> /etc/wireguard/wg0.conf
+  echo -e "[Interface]\nPrivateKey = $priv\nAddress = 10.6.0.$num/24\nListenPort = 51820\nDNS = 9.9.9.9\n[Peer]\nPublicKey = XXXXXXXXXXXXXXXXXXXX\nPresharedKey = $psk\nEndpoint = MYDNS.ORMY.IP:51820\nAllowedIPs = 0.0.0.0/0, ::0/0" >> /etc/wireguard/configs/$name'.conf'
 
-systemctl start wg-quick@wg0
+  pub=$(cat $name'_pub')
+  echo -e "###$name###\n[peer]\nPublicKey = $pub\nPresharedKey = $psk\nAllowedIPs = 10.6.0.$num/32\n###end $name###" >> /etc/wireguard/wg0.conf
 
-echo "$name has been added to wireguard,config file located /etc/wireguard/configs"
+  systemctl start wg-quick@wg0
+
+  echo "$name has been added to wireguard,config file located /etc/wireguard/configs" ; else
+  echo "Exiting Script....."
+  exit 0 ;
+fi
+
 
 ######Some configurations######
 #ufw route allow in on wg0 out on eth0 from 10.6.0.0/24
