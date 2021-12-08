@@ -9,5 +9,9 @@ alias nanoe='nano -il'
 alias duas='du -hcad 1 | sort -hr'
 alias def="e4defrag -c"
 #setfacl -m u:user:rwx /path/file
+#setfacl -m g:group/rw /path
+#setfacl -Rm "entry" /path/to/directory recursive
 alias setu='setfacl -m'
 alias getu='getfacl'
+#remove user acl
+alias setrmu='setfacl -x'
