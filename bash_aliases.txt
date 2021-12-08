@@ -6,3 +6,8 @@ alias hdd='lsblk -o +MODEL,SERIAL'
 alias sup='sudo apt-get update && sudo apt-get upgrade -y'
 alias nanov='nano -lv'
 alias nanoe='nano -il'
+alias duas='du -hcad 1 | sort -hr'
+alias def="e4defrag -c"
+#setfacl -m u:user:rwx /path/file
+alias setu='setfacl -m'
+alias getu='getfacl'
