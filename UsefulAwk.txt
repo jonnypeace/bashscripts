@@ -1,0 +1,17 @@
+Some awk examples
+
+You'll see further examples of awk used in my scripts, using arrays, and combined with sed.
+
+Changed the first column to bingo
+ls -l | awk '{$1="bingo"; print $0}'
+
+If first column = "test1" in the testfile.csv with field seperator comma (,)
+it'll print second column.
+awk -F, '{if ($1 == "test1") print $2}' testfile.csv
+
+Searches for string "test1" in the testfile.csv with field seperator comma (,)
+and prints second column.
+awk -F, '/test1/ {print $2}' testfile.csv
+
+prints the first row from the ls -l output
+ls -l | awk 'NR==1 {print}'
