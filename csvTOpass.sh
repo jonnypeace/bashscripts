@@ -31,7 +31,7 @@ for user in "${array[@]}"
   newsite=$(awk -F "," '{print $1}' <<< "${array[i]}")
   newuser=$(awk -F "," '{print $2}' <<< "${array[i]}")
   newpass=$( sed -e 's/,/ /1' -e 's/,/ /1' <<< "${array[i]}" | awk '{print $3}' )
-  (echo "$newpass"; echo "$newpass") | pass add --echo -e "$newsite/$newuser"
+  (echo "$newpass") | pass add --echo -e "$newsite/$newuser"
   i=$(( i + 1 ))
 done; else
 
