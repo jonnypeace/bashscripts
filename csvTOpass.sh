@@ -23,14 +23,7 @@ for user in "${array[@]}"
   do
   newsite=$(awk -F "," '{print $1}' <<< "${array[i]}")
   newuser=$(awk -F "," '{print $2}' <<< "${array[i]}")
-  newpass=$(awk -F "," '{print $3}' <<< "${array[i]}")
-  newpcon=$(awk -F "," '{print $4}' <<< "${array[i]}")
-  if [ -z $newpcon ]
-   then
-    (echo "$newpass"; echo "$newpass") | pass add --echo -e "$newsite/$newuser"
-   else
-   newpp=$(sed -e 's/.$//'  <<< "$newpass,$newpcon" | sed -e 's/^.//')
-   (echo "$newpp"; echo "$newpp") | pass add --echo -e "$newsite/$newuser"
-   fi
+  newpass=$( sed -e 's/,/ /1' -e 's/,/ /1' <<< "${array[i]}" | awk '{print $3}' )
+  (echo "$newpass"; echo "$newpass") | pass add --echo -e "$newsite/$newuser"
   i=$(( i + 1 ))
 done
