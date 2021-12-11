@@ -4,6 +4,7 @@ alias lis='ls -AlhF'
 alias dua='du -hcad 1'
 alias hdd='lsblk -o +MODEL,SERIAL'
 alias sup='sudo apt-get update && sudo apt-get upgrade -y'
+alias acs='sudo apt-cache search'
 alias nanov='nano -lv'
 alias nanoe='nano -il'
 alias duas='du -hcad 1 | sort -hr'
@@ -22,5 +23,5 @@ alias setalias='sudo nano -il +202 /usr/share/zsh/manjaro-zsh-config && source /
 alias showaliases='grep -A 100 "jp aliases" /usr/share/zsh/manjaro-zsh-config'
 #manjaro update
 #alias sup='sudo pacman -Syu'
-#manjaro history
+#manjaro history, better than the 15 lines of text by default.
 alias his='cat -b .zhistory | less'
