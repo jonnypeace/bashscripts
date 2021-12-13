@@ -25,3 +25,4 @@ alias showaliases='grep -A 100 "jp aliases" /usr/share/zsh/manjaro-zsh-config'
 #alias sup='sudo pacman -Syu'
 #manjaro history, better than the 15 lines of text by default.
 alias his='cat -b .zhistory | less'
+alias myip='curl ifconfig.me ; echo '''
