@@ -26,3 +26,6 @@ alias showaliases='grep -A 100 "jp aliases" /usr/share/zsh/manjaro-zsh-config'
 #manjaro history, better than the 15 lines of text by default.
 alias his='cat -b .zhistory | less'
 alias myip='curl ifconfig.me ; echo '''
+alias findbins='find / -perm /6000 -type f'
+# vim cheat sheet https://vim.rtorr.com/
+alias vimcol='ls -l /usr/share/vim/vim*/colors/'
