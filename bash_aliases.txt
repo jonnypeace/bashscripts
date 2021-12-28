@@ -1,8 +1,8 @@
 # remember to cp bash_aliases.txt ~/.bash_aliases && source ~/.bash_aliases (or use the set alias option below which will do this for you)
 
 #install ccat for syntax highlighting
-alias cat='ccat -G String="darkred" -G Plaintext="green" -G Keyword="fuchsia"'
-alias catcolour='ccat --palette'
+#alias cat='ccat -G String="darkred" -G Plaintext="green" -G Keyword="fuchsia"'
+#alias catcolour='ccat --palette'
 alias lis='ls -AlhF'
 alias dua='du -hcad 1'
 alias hdd='lsblk -o +MODEL,SERIAL'
