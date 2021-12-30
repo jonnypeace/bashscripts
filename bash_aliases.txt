@@ -10,6 +10,7 @@ alias sup='sudo apt-get update && sudo apt-get upgrade -y'
 alias acs='sudo apt-cache search'
 alias nanov='nano -lv'
 alias nanoe='nano -il'
+alias nanos='nano -il +/'
 alias duas='du -hcad 1 | sort -hr'
 alias def="e4defrag -c"
 #setfacl -m u:user:rwx /path/file
