@@ -18,9 +18,9 @@ data=$HOME/Documents/forPass.csv
 i=1
 array=()
 
-while IFS="" read -r p || [ -n "$p" ]
+while IFS=, read -r x y z
 do
-  array[i]=$(printf '%s\n' "$p")
+  array[i]=$(printf '%s\n' "$x $y $z")
   i=$(( i + 1 ))
 done < $data
 
@@ -28,10 +28,10 @@ i=1
 
 for user in "${array[@]}"
   do
-  newsite=$(awk -F "," '{print $1}' <<< "${array[i]}")
-  newuser=$(awk -F "," '{print $2}' <<< "${array[i]}")
-  newpass=$( sed -e 's/,/ /1' -e 's/,/ /1' <<< "${array[i]}" | awk '{print $3}' )
-  (echo "$newpass") | pass add --echo -e "$newsite/$newuser"
+  newsite=$(echo ${array[i]} | cut -d" " -f1)
+  newuser=$(echo ${array[i]} | cut -d" " -f2)
+  newpass=$(echo ${array[i]} | cut -d" " -f3)
+  (echo $newpass) | pass add --echo -e $newsite/$newuser
   i=$(( i + 1 ))
 done; else
 
