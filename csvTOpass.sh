@@ -9,31 +9,58 @@
 # This script will not work well if you have additional entries.
 # As you'll see below, my CSV file is called forPass.csv and is located /home/user/Documents
 
-echo -e "Is your CSV file formatted like so....\nwebsite,user,password\nLocated in /home/user/Documents\nFile named forPass.csv? [y/n] : "
+echo
+echo -e "Is your CSV file formatted like so....\n\nwebsite,user,password\nLocated in /home/user/Documents\nFile named forPass.csv? [y/n] : "
 read ans
-
 if [[ $ans =~ ^(yes|y)$ ]]; then
 
 data=$HOME/Documents/forPass.csv
-i=1
+i=0
 array=()
 
-while IFS=, read -r x y z
+while IFS="" read -r p
 do
-  array[i]=$(printf '%s\n' "$x $y $z")
+  array[i]=$(printf '%s\n' "$p")
   i=$(( i + 1 ))
 done < $data
 
-i=1
+i=0
+bulk=0
+notbulk=0
 
 for user in "${array[@]}"
-  do
-  newsite=$(echo ${array[i]} | cut -d" " -f1)
-  newuser=$(echo ${array[i]} | cut -d" " -f2)
-  newpass=$(echo ${array[i]} | cut -d" " -f3)
-  (echo $newpass) | pass add --echo -e $newsite/$newuser
-  i=$(( i + 1 ))
+do
+  newsite=$(awk -F "," '{print $1}' <<< "${array[i]}")
+  newuser=$(awk -F "," '{print $2}' <<< "${array[i]}")
+  newpass=$( sed -e 's/,/ /1' -e 's/,/ /1' <<< "${array[i]}" | awk '{print $3}' )
+  try=$(echo $newpass | awk -F "" '{print $NF}')
+  if [[ $try == "," ]]; then
+    read -p "Comma detected at end of $newsite/$newuser line in csv file, proceed? [y/n]? " check
+    if [[ $check =~ ^(yes|y)$ ]]; then
+      try=$( echo $newpass | sed -e 's/.$//' | awk -F "" '{print $1$NF}')
+      if [[ $try != '""' ]] ; then
+        newpass=$( echo $newpass | sed -e 's/.$//' )
+        (echo $newpass) | pass add --echo -e $newsite/$newuser
+        i=$(( i + 1 ))
+      else
+	      newpass=$( echo $newpass | sed -e 's/..$//' -e '1s/^.//' )
+	      (echo $newpass) | pass add --echo -e $newsite/$newuser
+	      i=$(( i + 1 ))
+      fi
+    fi ; else
+    try=$( echo $newpass | awk -F "" '{print $1$NF}')
+    if [[ $try == '""' ]]; then
+      newpass=$( echo $newpass | sed -e 's/.$//' -e '1s/^.//' )
+      (echo $newpass) | pass add --echo -e $newsite/$newuser
+      notbulk=$(( $notbulk + 1 ))
+      i=$(( i + 1 ))
+    else
+      (echo $newpass) | pass add --echo -e $newsite/$newuser
+      i=$(( i + 1 ))
+      bulk=$(( $bulk + 1 ))
+    fi
+ fi
 done; else
-
 echo "Script stopped until CSV is formatted correctly"
 fi
+echo bulk equal $bulk and notbulk equals $notbulk
