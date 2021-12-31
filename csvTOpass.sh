@@ -25,8 +25,6 @@ do
 done < $data
 
 i=0
-bulk=0
-notbulk=0
 
 for user in "${array[@]}"
 do
@@ -52,15 +50,12 @@ do
     if [[ $try == '""' ]]; then
       newpass=$( echo $newpass | sed -e 's/.$//' -e '1s/^.//' )
       (echo $newpass) | pass add --echo -e $newsite/$newuser
-      notbulk=$(( $notbulk + 1 ))
-      i=$(( i + 1 ))
+       i=$(( i + 1 ))
     else
       (echo $newpass) | pass add --echo -e $newsite/$newuser
       i=$(( i + 1 ))
-      bulk=$(( $bulk + 1 ))
     fi
  fi
 done; else
 echo "Script stopped until CSV is formatted correctly"
 fi
-echo bulk equal $bulk and notbulk equals $notbulk
