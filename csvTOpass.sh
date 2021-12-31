@@ -41,9 +41,9 @@ do
         (echo $newpass) | pass add --echo -e $newsite/$newuser
         i=$(( i + 1 ))
       else
-	      newpass=$( echo $newpass | sed -e 's/..$//' -e '1s/^.//' )
-	      (echo $newpass) | pass add --echo -e $newsite/$newuser
-	      i=$(( i + 1 ))
+	newpass=$( echo $newpass | sed -e 's/..$//' -e '1s/^.//' )
+	(echo $newpass) | pass add --echo -e $newsite/$newuser
+	i=$(( i + 1 ))
       fi
     fi ; else
     try=$( echo $newpass | awk -F "" '{print $1$NF}')
