@@ -50,7 +50,7 @@ do
     if [[ $try == '""' ]]; then
       newpass=$( echo $newpass | sed -e 's/.$//' -e '1s/^.//' )
       (echo $newpass) | pass add --echo -e $newsite/$newuser
-       i=$(( i + 1 ))
+      i=$(( i + 1 ))
     else
       (echo $newpass) | pass add --echo -e $newsite/$newuser
       i=$(( i + 1 ))
