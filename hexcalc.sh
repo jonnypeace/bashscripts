@@ -111,7 +111,7 @@ echo -e "File System Block Number: $b\n"
 read -p "Write over block (y/n)? " ans
 
 if [[ $ans =~ ^(yes|y)$ ]]; then
-	sudo dd if=/dev/zero of=$part bs=4096 count=1 seek=$b
+	sudo dd if=/dev/zero of=$part bs=$B count=1 seek=$b
 	sync
 	echo -e "\nMight need to run a smartctl -t (short/long/offline) $part to refresh current pending sector counts"; else
 	echo "Block ignored"
