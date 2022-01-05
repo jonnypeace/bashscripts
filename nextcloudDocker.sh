@@ -38,4 +38,7 @@ sudo docker run -d \
 --restart unless-stopped \
 ghcr.io/linuxserver/nextcloud
 
+if [[ $? != 0 ]]; then
+echo 'error occured trying to run docker'; else
 echo "Docker Container Updated"
+fi
