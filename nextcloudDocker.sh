@@ -19,10 +19,10 @@
 #wireguard script somewhere in here for bare metal wireguard, which helps a lot when adding new users.
 #Be wary, i believe some docker images don't persist your data.
 
-shafile='/home/user/heimsha.txt'
+shafile='/home/user/ncsha.txt'
 
 oldsha=`cat $shafile`
-newsha=$(docker pull ghcr.io/linuxserver/heimdall | grep sha256 | awk '{print $2}' | awk -F ':' '{print $2}')
+newsha=$(docker pull ghcr.io/linuxserver/nextcloud | grep sha256 | awk '{print $2}' | awk -F ':' '{print $2}')
 
 if [[ $oldsha == $newsha ]]
 then
