@@ -19,26 +19,38 @@
 #wireguard script somewhere in here for bare metal wireguard, which helps a lot when adding new users.
 #Be wary, i believe some docker images don't persist your data.
 
-answer=$(sudo docker ps -a | grep nextcloud | awk '{print $1}')
+shafile='/home/user/heimsha.txt'
 
-sudo docker stop nextcloud
+oldsha=`cat $shafile`
+newsha=$(docker pull ghcr.io/linuxserver/heimdall | grep sha256 | awk '{print $2}' | awk -F ':' '{print $2}')
 
-sudo docker container rm $answer
+if [[ $oldsha == $newsha ]]
+then
+	echo 'Image used is  already latest version'
+else
+	echo $newsha > $shafile
 
-sudo docker pull ghcr.io/linuxserver/nextcloud
+        answer=$(docker ps -a | grep nextcloud | awk '{print $1}')
 
-sudo docker run -d \
---name=nextcloud \
--e PUID=1000 \
--e PGID=1000 \
--e TZ=Europe/London \
--p 443:443 \
--v /home/user/nextcloud:/config \
--v /home/user/nextcloud:/data \
---restart unless-stopped \
-ghcr.io/linuxserver/nextcloud
+        docker stop $answer
 
-if [[ $? != 0 ]]; then
-echo 'error occured trying to run docker'; else
-echo "Docker Container Updated"
+        docker container rm $answer
+
+        docker pull ghcr.io/linuxserver/nextcloud
+
+        docker run -d \
+         --name=nextcloud \
+         -e PUID=1000 \
+         -e PGID=1000 \
+         -e TZ=Europe/London \
+         -p 443:443 \
+         -v /home/user/nextcloud:/config \
+         -v /home/user/nextcloud:/data \
+         --restart unless-stopped \
+         ghcr.io/linuxserver/nextcloud
+
+        if [[ $? != 0 ]]; then
+         echo 'error occured trying to run docker'; else
+         echo "Docker Container Updated"
+        fi
 fi
