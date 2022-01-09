@@ -1,5 +1,8 @@
 ##!/bin/bash
 
+# ASTM requires rounding numbers even. This bash script can be used as a function inside other larger 
+# mathematical scripts to round numbers to even, i,e. 0.5 = 0 , 0.15 = 0.2 etc.
+
         prune1=$(echo "scale=$2+1;$1/1" | bc )
         last2dig=$(echo $prune1 | sed -e 's/\(^.*\)\(..$\)/\2/')
 	div=$(echo "scale=$2+1;5/10^($2+1)" | bc )
