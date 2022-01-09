@@ -8,6 +8,10 @@
 # google,jonny,password123
 # This script will not work well if you have additional entries.
 # As you'll see below, my CSV file is called forPass.csv and is located /home/user/Documents
+# Keepass csv files can be formatted differently, between quotation marks "", and after tidying in libreoffice
+# some passwords can be left inside these quotation marks. This script assumes, ALL PASSWORDS DO NOT nest inside 
+# quotation marks. I've also seen comma's left at the end of each row after importing to libreoffice. Best check
+# the file using cat so there's no surprises.
 
 echo
 echo -e "Is your CSV file formatted like so....\n\nwebsite,user,password\nLocated in /home/user/Documents\nFile named forPass.csv? [y/n] : "
