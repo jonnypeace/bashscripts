@@ -17,7 +17,7 @@
 #You could probably get this to work through a wireguard range of local IP's as a work around and accessed via wireguard on the nextcloud server. 
 #I have a few set ups, and only need the one IP. I found it difficult to get docker to obey my wireguard firewall rules, hence you'll see a
 #wireguard script somewhere in here for bare metal wireguard, which helps a lot when adding new users.
-#Be wary, i believe some docker images don't persist your data.
+#Be wary, make sure your docker images have volumes for persistent data.
 
 shafile='/home/user/ncsha.txt'
 
