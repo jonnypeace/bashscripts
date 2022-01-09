@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#Only tested on SATA drives. This script will attempt to re-write zero's to the bad LBA_Sector blocks.
+#Tested on SATA and SAS drives. Doesn't work in ZFS using tune2fs. This script will attempt to re-write zero's to the bad LBA_Sector blocks.
 #The reason for this is to test the HDD and clear smart errors. If the blocks cant be written to, chances are it'll need replaced.
 
 #Getting device info
