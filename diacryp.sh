@@ -36,7 +36,7 @@ mkdir -p $mount
 clear
 echo "File creation in progress........."
 dd if=/dev/zero of=$enfile bs=$bsize count=$count
-cryptsetup luksFormat $enfile
+cryptsetup luksFormat --cipher aes-xts-plain64 -s 512 $enfile
 echo
 echo "Please enter newly created password to mount file....."
 echo
