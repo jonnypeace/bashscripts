@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#temporary files for redirecting stderr info
+#temporary files for redirecting stderr info, plenty of excess in case this grows
 temp1=$(mktemp -t test1.XXXXXX)
 temp2=$(mktemp -t test2.XXXXXX)
 temp3=$(mktemp -t test3.XXXXXX)
