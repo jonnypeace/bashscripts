@@ -17,12 +17,12 @@ function createnew {
 loc=$(pwd)
 
 dialog --title "Create New Crypto" \
---form "\nLocal file/mount can be called without full path ---- ctrl+c to leave" 25 80 16 \
-  "Name of file for encryption? Located: $loc" 1 1 "" 1 60 20 0 \
-  "byte size, i.e. 1M? (for dd)" 2 1 "" 2 60 20 0 \
-  "Count number of bytes, i.e. 1024 ? (for dd)" 3 1 "" 3 60 20 0 \
-  "Create /dev/mapper/....... secret name" 4 1 "" 4 60 20 0 \
-  "Mount Point i.e. /mnt/crypto" 5 1 "" 5 60 20 0 \
+--form "\nLocal file/mount can be called without full path ---- ctrl+c to leave" 30 60 10 \
+  "Encrpyted File Name" 1 1 "" 1 35 15 30 \
+  "byte size, i.e. 1M? (for dd)" 2 1 "" 2 35 15 30 \
+  "Count, i.e. 1024 ? (for dd)" 3 1 "" 3 35 15 30 \
+  "/dev/mapper/pathname i.e secret" 4 1 "" 4 35 15 30 \
+  "Mount Point i.e. /mnt/crypto" 5 1 "" 5 35 15 30 \
 2>$temp2
 if [ $? == 1 ]; then return 1; fi
 
@@ -54,10 +54,10 @@ fi
 function existcrypt {
 
 dialog --title "Mount Existing Crypto File" \
-  --form "\nLocal file/mount can be called without full path ---- ctrl+c to leave" 25 80 16 \
-  "Location/Name of encrypted file i.e. /home/user/file" 1 1 "" 1 60 20 0 \
-  "Name of /dev/mapper/....... secret name" 2 1 "" 2 60 20 0 \
-  "Mount Point i.e. /mnt OR create new if one doesnt exist" 3 1 "" 3 60 20 0 \
+  --form "\nLocal file/mount can be called without full path ---- ctrl+c to leave" 30 60 10 \
+  "File name or full path" 1 1 "" 1 35 15 30 \
+  "/dev/mapper/pathname i.e. secret" 2 1 "" 2 35 15 30 \
+  "Location for mount point" 3 1 "" 3 35 15 30 \
 2>$temp2
 if [ $? == 1 ]; then return 1; fi
 
@@ -81,9 +81,9 @@ fi
 function unmount {
 
 dialog --title "Unmount Existing Crypto File" \
-  --form "\nLocal mount point can be called without full path ---- ctrl+c to leave" 25 80 16 \
-  "Name of /dev/mapper/....... secret name" 1 1 "" 1 60 20 0 \
-  "Mount Point i.e. /mnt" 2 1 "" 2 60 20 0 \
+  --form "\nLocal mount point can be called without full path ---- ctrl+c to leave" 30 60 10 \
+  "/dev/mapper/pathname i.e. secret" 1 1 "" 1 35 15 30 \
+  "Location for mount point" 2 1 "" 2 35 15 30 \
 2>$temp2
 if [ $? == 1 ]; then return 1; fi
 
