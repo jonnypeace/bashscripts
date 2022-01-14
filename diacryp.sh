@@ -14,7 +14,7 @@ temp9=$(mktemp -t test9.XXXXXX)
 # create new encrypted file for mounting
 function createnew {
 
-loc=`pwd`
+loc=$(pwd)
 
 dialog --title "Create New Crypto" \
 --form "\nLocal file/mount can be called without full path ---- ctrl+c to leave" 25 80 16 \
@@ -26,11 +26,11 @@ dialog --title "Create New Crypto" \
 2>$temp2
 if [ $? == 1 ]; then return 1; fi
 
-enfile=`awk 'NR==1{print}' $temp2`
-bsize=`awk 'NR==2{print}' $temp2`
-count=`awk 'NR==3{print}' $temp2`
-secret=`awk 'NR==4{print}' $temp2`
-mount=`awk 'NR==5{print}' $temp2`
+enfile=$(awk 'NR==1{print}' $temp2)
+bsize=$(awk 'NR==2{print}' $temp2)
+count=$(awk 'NR==3{print}' $temp2)
+secret=$(awk 'NR==4{print}' $temp2)
+mount=$(awk 'NR==5{print}' $temp2)
 
 mkdir -p $mount
 clear
@@ -61,9 +61,9 @@ dialog --title "Mount Existing Crypto File" \
 2>$temp2
 if [ $? == 1 ]; then return 1; fi
 
-enfile=`awk 'NR==1{print}' $temp2`
-secret=`awk 'NR==2{print}' $temp2`
-mount=`awk 'NR==3{print}' $temp2`
+enfile=$(awk 'NR==1{print}' $temp2)
+secret=$(awk 'NR==2{print}' $temp2)
+mount=$(awk 'NR==3{print}' $temp2)
 
 mkdir -p $mount
 
@@ -87,8 +87,8 @@ dialog --title "Unmount Existing Crypto File" \
 2>$temp2
 if [ $? == 1 ]; then return 1; fi
 
-secret=`awk 'NR==1{print}' $temp2`
-mount=`awk 'NR==2{print}' $temp2`
+secret=$(awk 'NR==1{print}' $temp2)
+mount=$(awk 'NR==2{print}' $temp2)
 
 clear
 umount $mount
