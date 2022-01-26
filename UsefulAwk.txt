@@ -15,3 +15,10 @@ awk -F, '/test1/ {print $2}' testfile.csv
 
 prints the first row from the ls -l output
 ls -l | awk 'NR==1 {print}'
+
+Input and Output field separators
+awk 'BEGIN{FS=OFS="/"}{NF--; print}' <<< /1/2/3/4/5/6
+This will set the field separator and output FS to /, and the {NF--; print} excludes the last field.
+
+awk -F/ '{NF--; print}' <<< /1/2/3/4/5/6
+Excluding the FS=OFS leaves a different output with spaces.
