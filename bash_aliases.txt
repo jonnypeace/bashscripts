@@ -48,3 +48,4 @@ alias psnice='ps axo pid,comm,nice,cls --sort=-nice'
 # below 7zip and sysbench are for single thread
 alias 7z1ben='7z b -mmt1'
 alias sysbencpu='sysbench --test=cpu --cpu-max-prime=15000 --num-threads=1 run'
+alias login='last | awk '{print $1}' | sort | uniq'
