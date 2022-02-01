@@ -17,7 +17,7 @@ if [[ $ans =~ ^(yes|y)$ ]]; then
 
   systemctl stop wg-quick@wg0
   read -p "Enter peer name: " name
-  read -p "Enter subnet last digit: " num
+  read -p "Enter subnet last digit, i.e. 10.6.0.2, last digit being 2: " num
   umask 077
   wg genkey | tee $name'_priv' | wg pubkey > $name'_pub'
   umask 077
