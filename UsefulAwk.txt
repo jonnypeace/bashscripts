@@ -22,3 +22,6 @@ This will set the field separator and output FS to /, and the {NF--; print} excl
 
 awk -F/ '{NF--; print}' <<< /1/2/3/4/5/6
 Excluding the FS=OFS leaves a different output with spaces.
+
+find max numerical value from an echo of 1-6 in $1
+echo -e "1\n2\n3\n6\n4\n5" | awk 'BEGIN{max=0}{if ($1>0+max) max=$1} END{print max}'
