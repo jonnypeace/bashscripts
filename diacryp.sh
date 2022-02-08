@@ -44,7 +44,7 @@ cryptsetup --verbose luksOpen $loc/$enfile $secret
 mkfs.ext4 /dev/mapper/$secret
 mount /dev/mapper/$secret $mount
 if [[ $? != 0 ]]; then
-  dialog --msgbox "Unable to proceed, check file location" 25 60; else
+  dialog --msgbox "Unable to proceed, check file location, are you sudo" 25 60; else
   dialog --msgbox "File mounted in $mount/$enfile" 25 60
 fi
 
@@ -71,7 +71,7 @@ clear
 cryptsetup --verbose luksOpen $enfile $secret
 mount /dev/mapper/$secret $mount
 if [[ $? != 0 ]]; then
-  dialog --msgbox "Unable to proceed, check file location" 25 60; else
+  dialog --msgbox "Unable to proceed, check file location, are you sudo" 25 60; else
   dialog --msgbox "File mounted in $mount/$enfile" 25 60
 fi
 
@@ -95,7 +95,7 @@ umount $mount
 cryptsetup --verbose luksClose $secret
 
 if [[ $? != 0 ]]; then
-  dialog --msgbox "Unable to proceed, check file location" 25 60; else
+  dialog --msgbox "Unable to proceed, check file location, are you sudo" 25 60; else
   dialog --msgbox "File has been unmounted" 25 60
 fi
 
