@@ -18,11 +18,11 @@ loc=$(pwd)
 
 dialog --title "Create New Crypto" \
 --form "\nLocal file/mount can be called without full path ---- ctrl+c to leave" 30 60 10 \
-  "Encrpyted File Name" 1 1 "" 1 37 15 00 \
-  "byte size, i.e. 1M? (for dd)" 2 1 "" 2 37 15 00 \
-  "Count, i.e. 1024 ? (for dd)" 3 1 "" 3 37 15 00 \
-  "/dev/mapper/pathname i.e secret" 4 1 "" 4 37 15 00 \
-  "Mount Point i.e. /mnt/crypto" 5 1 "" 5 37 15 00 \
+  "Encrpyted File Name" 1 1 "" 1 37 15 50 \
+  "byte size, i.e. 1M? (for dd)" 2 1 "" 2 37 15 50 \
+  "Count, i.e. 1024 ? (for dd)" 3 1 "" 3 37 15 50 \
+  "/dev/mapper/pathname i.e secret" 4 1 "" 4 37 15 50 \
+  "Mount Point i.e. /mnt/crypto" 5 1 "" 5 37 15 50 \
 2>$temp2
 if [ $? == 1 ]; then return 1; fi
 
@@ -55,9 +55,9 @@ function existcrypt {
 
 dialog --title "Mount Existing Crypto File" \
   --form "\nLocal file/mount can be called without full path ---- ctrl+c to leave" 30 60 10 \
-  "File name or full path" 1 1 "" 1 37 15 00 \
-  "/dev/mapper/pathname i.e. secret" 2 1 "" 2 37 15 00 \
-  "Location for mount point" 3 1 "" 3 37 15 00 \
+  "File name or full path" 1 1 "" 1 37 15 50 \
+  "/dev/mapper/pathname i.e. secret" 2 1 "" 2 37 15 50 \
+  "Location for mount point" 3 1 "" 3 37 15 50 \
 2>$temp2
 if [ $? == 1 ]; then return 1; fi
 
@@ -82,8 +82,8 @@ function unmount {
 
 dialog --title "Unmount Existing Crypto File" \
   --form "\nLocal mount point can be called without full path ---- ctrl+c to leave" 30 60 10 \
-  "/dev/mapper/pathname i.e. secret" 1 1 "" 1 37 15 00 \
-  "Location for mount point" 2 1 "" 2 37 15 00 \
+  "/dev/mapper/pathname i.e. secret" 1 1 "" 1 37 15 50 \
+  "Location for mount point" 2 1 "" 2 37 15 50 \
 2>$temp2
 if [ $? == 1 ]; then return 1; fi
 
