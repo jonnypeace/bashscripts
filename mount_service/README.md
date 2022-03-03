@@ -21,11 +21,13 @@ sudo systemctl status mount_3tb.service --lines=17
 
 Note: it will say inactive dead, because it only runs at boot. I've run the service as jonny, but an easy way to suppress the sudo messages
 will be if you run the service as root, and remove sudo commands from the mountNFS script.
-You could also remove the sudo commands from mountNFS script and
+You could also remove the sudo commands from mountNFS script and run this...
 
 ~~~
 sudo chmod u+s /sbin/smartctl
 ~~~
+
+sudo noise in systemctl status, it's fine like this, but noisey.
 ~~~
 jonny@server:~ $ sudo systemctl status mount_3tb.service --lines=17
 ● mount_3tb.service - Mount 3tb drives
