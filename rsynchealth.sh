@@ -2,7 +2,7 @@
 
 #Quick script for synchronising backups, looking up drive health before it could potentially
 #write bad data and vice versa. I use this in a crontab which emails (you'll have to set that up manually)
-#the output.
+#the output. I set this up to run in crontab.
 
 ###############################
 # AT PRESENT, THIS SCRIPT CHECKS A FEW ATTRIBUTES AND OVERALL HEALTH OF SATA DRIVES.
