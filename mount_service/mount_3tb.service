@@ -18,3 +18,4 @@ WantedBy=multi-user.target
 # Move the service to the below directory and reload the daemon.
 # mv mount_service.service /etc/systemd/system
 # systemctl daemon-reload
+# systemctl enable mount_service.service
