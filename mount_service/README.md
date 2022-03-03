@@ -19,7 +19,8 @@ If you follow along for the most part, you can get some smart health and success
 sudo systemctl status mount_3tb.service --lines=17
 ~~~
 
-Note: it will say inactive dead, because it only runs at boot.
+Note: it will say inactive dead, because it only runs at boot. I've run the service as jonny, but an easy way to supporess the sudo messages
+will be if you run the service as root, and remove sudo commands from the mountNFS script.
 ~~~
 jonny@server:~ $ sudo systemctl status mount_3tb.service --lines=17
 ● mount_3tb.service - Mount 3tb drives
@@ -46,4 +47,23 @@ Mar 03 11:39:15 server sudo[2170]: pam_unix(sudo:session): session closed for us
 Mar 03 11:39:15 server sh[2147]: pi 3tb2 drive mounted & overall-health: PASSED & Reallocated_Event_Count: 0 Current_Pending_Sector: 0 Offline_Uncorrectable: 0
 Mar 03 11:39:15 server systemd[1]: mount_3tb.service: Succeeded.
 Mar 03 11:39:15 server systemd[1]: Finished Mount 3tb drives.
+~~~
+
+When the service is run as root and the sudo commands removed from the mountNFS script, it's a lot cleaner.
+
+~~~
+jonny@server:~ $ sudo systemctl status mount_3tb.service 
+● mount_3tb.service - Mount 3tb drives
+     Loaded: loaded (/etc/systemd/system/mount_3tb.service; enabled; vendor preset: enabled)
+     Active: inactive (dead) since Thu 2022-03-03 12:43:21 GMT; 1min 15s ago
+    Process: 384 ExecStart=/bin/sh -c /root/mountNFS.sh (code=exited, status=0/SUCCESS)
+   Main PID: 384 (code=exited, status=0/SUCCESS)
+        CPU: 1.256s
+
+Mar 03 12:43:19 server systemd[1]: Starting Mount 3tb drives...
+Mar 03 12:43:20 server sh[386]: pi 3tb1 drive mounted & overall-health: PASSED & Reallocated_Event_Count: 0 Current_Pending_Sector: 0 Offline_Uncorrectable: 0
+Mar 03 12:43:21 server sh[386]: pi 3tb2 drive mounted & overall-health: PASSED & Reallocated_Event_Count: 0 Current_Pending_Sector: 0 Offline_Uncorrectable: 0
+Mar 03 12:43:21 server systemd[1]: mount_3tb.service: Succeeded.
+Mar 03 12:43:21 server systemd[1]: Finished Mount 3tb drives.
+Mar 03 12:43:21 server systemd[1]: mount_3tb.service: Consumed 1.256s CPU time
 ~~~
