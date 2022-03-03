@@ -1,0 +1,4 @@
+proc            /proc           proc    defaults          0       0
+# My fstab drive mounts below. DO NOT copy this over your fstab, this is just an example.
+/dev/sda1	/drive1	ext4	defaults,noauto,users	0	0
+/dev/sdb1	/drive2	ext4	defaults,noauto,users	0	0
