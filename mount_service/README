@@ -1,0 +1,14 @@
+All files here are for the host server set up. 
+
+Some configs, 1 service and a couple of my scripts to keep my NFS shares ticking over with rsync backups.
+
+I used a service to mount the drives because i'm not a fan of a headless system hanging on boot, with the auto option in fstab.
+Also crontab works fine, but I found mail clutter (i know that can be turned off) and it only needs run at boot.
+
+DO NOT copy over your own configs with these configs, these are just examples.
+
+Each file will need some modifications to suit your set up.. usernames, directories, drive names, /dev/sda etc.
+
+Each file has some help inside them, if more info required, feel free to message me (jonny) at royalpython2@hotmail.com
+
+Hopefully helpful for those like me.
