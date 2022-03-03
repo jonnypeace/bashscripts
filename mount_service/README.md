@@ -19,7 +19,7 @@ If you follow along for the most part, you can get some smart health and success
 sudo systemctl status mount_3tb.service --lines=17
 ~~~
 
-Note: it will say inactive dead, because it only runs at boot. I've run the service as jonny, but an easy way to supporess the sudo messages
+Note: it will say inactive dead, because it only runs at boot. I've run the service as jonny, but an easy way to suppress the sudo messages
 will be if you run the service as root, and remove sudo commands from the mountNFS script.
 ~~~
 jonny@server:~ $ sudo systemctl status mount_3tb.service --lines=17
