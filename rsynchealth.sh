@@ -32,7 +32,7 @@ if [[ -e $testmount1 || -e $testmount2 ]] ; then
 # If one of the drives does not conform to the above arguments, no rsync takes place
     echo "Check drive health, might be time to replace one of the drives" ; else
 # If both drives pass the arguments, rsync will progress.
-# IMPORT when using rsync. Always format like so.... rsync -options /drive1/ /drive2/ with the slash at the end of your mount point or directory.
+# IMPORTANT when using rsync. Syntax for me works best like so.... rsync -options /drive1/ /drive2/ with the slash at the end of your mount point or directory.
     echo "Syncing drives..."
     rsync -avhrxH --delete /drive1/ /drive2/
   fi ; else
