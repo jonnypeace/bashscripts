@@ -29,21 +29,21 @@ jonny@server:~ $ sudo systemctl status mount_3tb.service --lines=17
    Main PID: 2146 (code=exited, status=0/SUCCESS)
         CPU: 584ms
 
-Mar 03 11:39:14 pi4ipserver systemd[1]: Starting Mount 3tb drives...
-Mar 03 11:39:14 pi4ipserver sudo[2149]:    jonny : PWD=/ ; USER=root ; COMMAND=/usr/sbin/smartctl -H /dev/sda
-Mar 03 11:39:14 pi4ipserver sudo[2149]: pam_unix(sudo:session): session opened for user root(uid=0) by (uid=1000)
-Mar 03 11:39:14 pi4ipserver sudo[2149]: pam_unix(sudo:session): session closed for user root
-Mar 03 11:39:14 pi4ipserver sudo[2153]:    jonny : PWD=/ ; USER=root ; COMMAND=/usr/sbin/smartctl -A /dev/sda
-Mar 03 11:39:14 pi4ipserver sudo[2153]: pam_unix(sudo:session): session opened for user root(uid=0) by (uid=1000)
-Mar 03 11:39:14 pi4ipserver sudo[2153]: pam_unix(sudo:session): session closed for user root
-Mar 03 11:39:14 pi4ipserver sh[2147]: pi 3tb1 drive mounted & overall-health: PASSED & Reallocated_Event_Count: 0 Current_Pending_Sector: 0 Offline_Uncorrectable: 0
-Mar 03 11:39:14 pi4ipserver sudo[2165]:    jonny : PWD=/ ; USER=root ; COMMAND=/usr/sbin/smartctl -H /dev/sdb
-Mar 03 11:39:14 pi4ipserver sudo[2165]: pam_unix(sudo:session): session opened for user root(uid=0) by (uid=1000)
-Mar 03 11:39:14 pi4ipserver sudo[2165]: pam_unix(sudo:session): session closed for user root
-Mar 03 11:39:14 pi4ipserver sudo[2170]:    jonny : PWD=/ ; USER=root ; COMMAND=/usr/sbin/smartctl -A /dev/sdb
-Mar 03 11:39:14 pi4ipserver sudo[2170]: pam_unix(sudo:session): session opened for user root(uid=0) by (uid=1000)
-Mar 03 11:39:15 pi4ipserver sudo[2170]: pam_unix(sudo:session): session closed for user root
-Mar 03 11:39:15 pi4ipserver sh[2147]: pi 3tb2 drive mounted & overall-health: PASSED & Reallocated_Event_Count: 0 Current_Pending_Sector: 0 Offline_Uncorrectable: 0
-Mar 03 11:39:15 pi4ipserver systemd[1]: mount_3tb.service: Succeeded.
-Mar 03 11:39:15 pi4ipserver systemd[1]: Finished Mount 3tb drives.
+Mar 03 11:39:14 pserver systemd[1]: Starting Mount 3tb drives...
+Mar 03 11:39:14 server sudo[2149]:    jonny : PWD=/ ; USER=root ; COMMAND=/usr/sbin/smartctl -H /dev/sda
+Mar 03 11:39:14 server sudo[2149]: pam_unix(sudo:session): session opened for user root(uid=0) by (uid=1000)
+Mar 03 11:39:14 server sudo[2149]: pam_unix(sudo:session): session closed for user root
+Mar 03 11:39:14 server sudo[2153]:    jonny : PWD=/ ; USER=root ; COMMAND=/usr/sbin/smartctl -A /dev/sda
+Mar 03 11:39:14 server sudo[2153]: pam_unix(sudo:session): session opened for user root(uid=0) by (uid=1000)
+Mar 03 11:39:14 server sudo[2153]: pam_unix(sudo:session): session closed for user root
+Mar 03 11:39:14 server sh[2147]: pi 3tb1 drive mounted & overall-health: PASSED & Reallocated_Event_Count: 0 Current_Pending_Sector: 0 Offline_Uncorrectable: 0
+Mar 03 11:39:14 server sudo[2165]:    jonny : PWD=/ ; USER=root ; COMMAND=/usr/sbin/smartctl -H /dev/sdb
+Mar 03 11:39:14 server sudo[2165]: pam_unix(sudo:session): session opened for user root(uid=0) by (uid=1000)
+Mar 03 11:39:14 server sudo[2165]: pam_unix(sudo:session): session closed for user root
+Mar 03 11:39:14 server sudo[2170]:    jonny : PWD=/ ; USER=root ; COMMAND=/usr/sbin/smartctl -A /dev/sdb
+Mar 03 11:39:14 server sudo[2170]: pam_unix(sudo:session): session opened for user root(uid=0) by (uid=1000)
+Mar 03 11:39:15 server sudo[2170]: pam_unix(sudo:session): session closed for user root
+Mar 03 11:39:15 server sh[2147]: pi 3tb2 drive mounted & overall-health: PASSED & Reallocated_Event_Count: 0 Current_Pending_Sector: 0 Offline_Uncorrectable: 0
+Mar 03 11:39:15 server systemd[1]: mount_3tb.service: Succeeded.
+Mar 03 11:39:15 server systemd[1]: Finished Mount 3tb drives.
 ~~~
