@@ -24,7 +24,7 @@ will be if you run the service as root, and remove sudo commands from the mountN
 You could also remove the sudo commands from mountNFS script and
 
 ~~~
-sudo chmod u+s smartctl
+sudo chmod u+s /sbin/smartctl
 ~~~
 ~~~
 jonny@server:~ $ sudo systemctl status mount_3tb.service --lines=17
