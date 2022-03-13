@@ -5,7 +5,7 @@ Before=nfs-mountd.service
 [Service]
 Type=oneshot
 User=jonny
-ExecStart=-/bin/sh -c "/path/to/mountNFS.sh"
+ExecStart=-/bin/bash -c "/path/to/mountNFS.sh"
 
 [Install]
 WantedBy=multi-user.target
