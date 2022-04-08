@@ -39,7 +39,7 @@ do
     if [[ $check =~ ^(yes|y)$ ]]; then
       try=$( echo "$newpass" | sed -e 's/.$//' | awk -F "" '{print $1$NF}')
       if [[ $try != '""' ]] ; then
-        newpass="${newpass%?}" # "${newpass:1}" for first character. remove to last characters, use ??
+        newpass="${newpass%?}"
         (echo "$newpass") | pass add --echo -e "$newsite"/"$newuser"
       else
 	newpass=$( echo "$newpass" | sed -e 's/..$//' -e '1s/^.//' )
