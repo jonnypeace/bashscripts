@@ -17,8 +17,7 @@ echo
 echo -e "Is your CSV file formatted like so....\n\nwebsite,user,password\nLocated in /home/user/Documents\nFile named forPass.csv? [y/n] : "
 read -r ans
 
-if [[ $ans =~ ^(yes|y)$ ]]; then
-#data=$HOME/Documents/quotation.csv
+if [[ $ans =~ ^[yY][eE][sS]$ ]]; then
 data=$HOME/Documents/forPass.csv
 i=0
 array=()
