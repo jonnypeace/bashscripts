@@ -15,9 +15,10 @@
 
 echo
 echo -e "Is your CSV file formatted like so....\n\nwebsite,user,password\nLocated in /home/user/Documents\nFile named forPass.csv? [y/n] : "
-read ans
-if [[ $ans =~ ^(yes|y)$ ]]; then
+read -r ans
 
+if [[ $ans =~ ^(yes|y)$ ]]; then
+#data=$HOME/Documents/quotation.csv
 data=$HOME/Documents/forPass.csv
 i=0
 array=()
@@ -26,38 +27,32 @@ while IFS="" read -r p
 do
   array[i]=$(printf '%s\n' "$p")
   i=$(( i + 1 ))
-done < $data
+done < "$data"
 
-i=0
-
-for user in "${array[@]}"
+for i in "${array[@]}"
 do
-  newsite=$(awk -F "," '{print $1}' <<< "${array[i]}")
-  newuser=$(awk -F "," '{print $2}' <<< "${array[i]}")
-  newpass=$( sed -e 's/,/ /1' -e 's/,/ /1' <<< "${array[i]}" | awk '{print $3}' )
-  try=$(echo $newpass | awk -F "" '{print $NF}')
+  newsite=$(awk -F "," '{print $1}' <<< "$i")
+  newuser=$(awk -F "," '{print $2}' <<< "$i")
+  newpass=$( sed -e 's/,/ /1' -e 's/,/ /1' <<< "$i" | awk '{print $3}' )
+  try=$(echo "$newpass" | awk -F "" '{print $NF}')
   if [[ $try == "," ]]; then
-    read -p "Comma detected at end of $newsite/$newuser line in csv file, proceed? [y/n]? " check
+    read -rp "Comma detected at end of $newsite/$newuser line in csv file, proceed? [y/n]? " check
     if [[ $check =~ ^(yes|y)$ ]]; then
-      try=$( echo $newpass | sed -e 's/.$//' | awk -F "" '{print $1$NF}')
+      try=$( echo "$newpass" | sed -e 's/.$//' | awk -F "" '{print $1$NF}')
       if [[ $try != '""' ]] ; then
-        newpass=$( echo $newpass | sed -e 's/.$//' )
-        (echo $newpass) | pass add --echo -e $newsite/$newuser
-        i=$(( i + 1 ))
+        newpass="${newpass%?}" # "${newpass:1}" for first character. remove to last characters, use ??
+        (echo "$newpass") | pass add --echo -e "$newsite"/"$newuser"
       else
-	newpass=$( echo $newpass | sed -e 's/..$//' -e '1s/^.//' )
-	(echo $newpass) | pass add --echo -e $newsite/$newuser
-	i=$(( i + 1 ))
+	newpass=$( echo "$newpass" | sed -e 's/..$//' -e '1s/^.//' )
+	(echo "$newpass") | pass add --echo -e "$newsite"/"$newuser"
       fi
     fi ; else
-    try=$( echo $newpass | awk -F "" '{print $1$NF}')
+    try=$( echo "$newpass" | awk -F "" '{print $1$NF}')
     if [[ $try == '""' ]]; then
-      newpass=$( echo $newpass | sed -e 's/.$//' -e '1s/^.//' )
-      (echo $newpass) | pass add --echo -e $newsite/$newuser
-      i=$(( i + 1 ))
+      newpass=$( echo "$newpass" | sed -e 's/.$//' -e '1s/^.//' )
+      (echo "$newpass") | pass add --echo -e "$newsite"/"$newuser"
     else
-      (echo $newpass) | pass add --echo -e $newsite/$newuser
-      i=$(( i + 1 ))
+      (echo "$newpass") | pass add --echo -e "$newsite"/"$newuser"
     fi
  fi
 done; else
