@@ -1,0 +1,27 @@
+Some awk examples
+
+You'll see further examples of awk used in my scripts, using arrays, and combined with sed.
+
+Changed the first column to bingo
+ls -l | awk '{$1="bingo"; print $0}'
+
+If first column = "test1" in the testfile.csv with field seperator comma (,)
+it'll print second column.
+awk -F, '{if ($1 == "test1") print $2}' testfile.csv
+
+Searches for string "test1" in the testfile.csv with field seperator comma (,)
+and prints second column.
+awk -F, '/test1/ {print $2}' testfile.csv
+
+prints the first row from the ls -l output
+ls -l | awk 'NR==1 {print}'
+
+Input and Output field separators
+awk 'BEGIN{FS=OFS="/"}{NF--; print}' <<< /1/2/3/4/5/6
+This will set the field separator and output FS to /, and the {NF--; print} excludes the last field.
+
+awk -F/ '{NF--; print}' <<< /1/2/3/4/5/6
+Excluding the FS=OFS leaves a different output with spaces.
+
+find max numerical value from an echo of 1-6 in $1
+echo -e "1\n2\n3\n6\n4\n5" | awk 'BEGIN{max=0}{if ($1>0+max) max=$1} END{print max}'
