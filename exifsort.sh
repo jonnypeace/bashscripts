@@ -34,15 +34,15 @@ echo -e "\nPicture file sorting in progress...."
 
 for f in "$folder"/*.jpg "$folder"/*.jpeg ;
 	do
-	data=$(exif "$f" 2> /dev/null | grep "Date and Time (Origi" | cut -c 22-25)
+	data=$(exif -t 0x9003 "$f" 2> /dev/null | sed -n '$p' | sed -e 's/^.*: //' -e 's/:.*$//')
 
 #if the grep info is not Origi, then the data variable won't have a value,
 #but there is another row we can check that will still be close...
 
 	shopt -s extglob
 	case "$data" in
-	 $casedata) echo -e "\c";;
-	 *) data=$(exif "$f" 2> /dev/null | grep "Date and Time" | cut -c 22-25 | awk 'NR==1{print}') ;;
+	 $casedata) : ;;
+	 *) data=$(exif -t 0x0132 "$f" 2> /dev/null | sed -n '$p' | sed -e 's/^.*: //' -e 's/:.*$//') ;;
 	esac
 	shopt -u extglob
 	
@@ -52,7 +52,7 @@ for f in "$folder"/*.jpg "$folder"/*.jpeg ;
 
 	for (( i = 1; i <= "$yeardif"; i++ )) ;
 	 do
-	 year=$( echo "${groups[i]}" | sed 's/.*\(.....\)/\1/' | cut -d "/" -f1 )
+	 year=$( echo "${groups[i]}" | sed -e 's/.$//' -e 's/^.*\///' )
 	 pathto="${groups[i]}"
 	 case "$data" in
 
@@ -61,7 +61,7 @@ for f in "$folder"/*.jpg "$folder"/*.jpeg ;
 		;;
 
 		*)
-		echo -e "\c"
+		: "\c"
 		;;
 	 esac
 	done
