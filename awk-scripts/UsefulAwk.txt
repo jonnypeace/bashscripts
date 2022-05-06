@@ -25,3 +25,13 @@ Excluding the FS=OFS leaves a different output with spaces.
 
 find max numerical value from an echo of 1-6 in $1
 echo -e "1\n2\n3\n6\n4\n5" | awk 'BEGIN{max=0}{if ($1>0+max) max=$1} END{print max}'
+
+##################################################################################
+#!/bin/bash
+
+# pipe input into awk, regex search into array, select first regex, split into another array and use 3rd element of array. 
+
+echo 'line 1
+line 2 win
+line 22 lose' | awk '/line 2/{l[lines++]=$0}END{split(l[0],a);print a[3]}'
+##################################################################################
