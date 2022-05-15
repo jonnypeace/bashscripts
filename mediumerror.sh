@@ -6,10 +6,10 @@
 medtemp=$(mktemp -t medtemp.XXXXXX)
 
 #Baseline file to compare data against.
-read -p "Create baseline data? Warning, will recreate baseline data file with present data [y/n] : " ans
+read -rp "Create baseline data? Warning, will recreate baseline data file with present data [y/n] : " ans
 smartctl --scan
-read -p "Start drive number, i.e. /dev/pass2. 2 would be the start number: " start
-read -p "Last drive number, i.e /dev/pass5. 5 would be the last number: " last
+read -rp "Start drive number, i.e. /dev/pass2. 2 would be the start number: " start
+read -rp "Last drive number, i.e /dev/pass5. 5 would be the last number: " last
 
 if [[ "$ans" =~ ^(yes|y)$ ]]; then
 	cat /dev/null > serialMediumErrors.txt
@@ -20,7 +20,7 @@ if [[ "$ans" =~ ^(yes|y)$ ]]; then
 fi
 
 for ((i="$start"; i<="$last"; i++)); do 
-	smartctl -a /dev/pass"$i" | grep "Serial number" >> $medtemp; smartctl -a /dev/pass"$i" | grep "Non-medium error" >> "$medtemp"
+	smartctl -a /dev/pass"$i" | grep "Serial number" >> "$medtemp"; smartctl -a /dev/pass"$i" | grep "Non-medium error" >> "$medtemp"
 done
 
 #Check previous disk health
