@@ -21,20 +21,20 @@
 
 shafile='/home/user/ncsha.txt'
 
-oldsha=`cat $shafile`
+oldsha=$(cat "$shafile")
 newsha=$(docker pull ghcr.io/linuxserver/nextcloud | grep sha256 | awk '{print $2}' | awk -F ':' '{print $2}')
 
-if [[ $oldsha == $newsha ]]
+if [[ "$oldsha" == "$newsha" ]]
 then
 	echo 'Image used is  already latest version'
 else
-	echo $newsha > $shafile
+	echo "$newsha" > "$shafile"
 
         answer=$(docker ps -a | grep nextcloud | awk '{print $1}')
 
-        docker stop $answer
+        docker stop "$answer"
 
-        docker container rm $answer
+        docker container rm "$answer"
 
         docker pull ghcr.io/linuxserver/nextcloud
 
