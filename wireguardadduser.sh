@@ -10,14 +10,14 @@
 ##umask 077; wg genkey | tee privatekey | wg pubkey > publickey
 
 #ubuntu server doesn't allow the edit of the wg0.conf file unless wireguard service has stopped running.
-read -p "Warning, this script will halt your wireguard server while adding new users. Proceed? [y/N]? " ans
+read -rp "Warning, this script will halt your wireguard server while adding new users. Proceed? [y/N]? " ans
 mkdir -p /etc/wireguard/configs
 
 if [[ "$ans" =~ ^(yes|y)$ ]]; then
 
   systemctl stop wg-quick@wg0
-  read -p "Enter peer name: " name
-  read -p "Enter subnet last digit, i.e. 10.6.0.2, last digit being 2: " num
+  read -rp "Enter peer name: " name
+  read -rp "Enter subnet last digit, i.e. 10.6.0.2, last digit being 2: " num
   umask 077
   wg genkey | tee "$name"'_priv' | wg pubkey > "$name"'_pub'
   umask 077

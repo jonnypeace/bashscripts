@@ -1,4 +1,3 @@
-
 #! /bin/bash
 
 #Typical script i use to update nextcloud to the latest release using docker.
