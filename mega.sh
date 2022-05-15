@@ -1,11 +1,13 @@
 #!/bin/bash
 
+# UNDER DEVELOPMENT
 # do it all script.
-# search files and tunnel to nordvpn
-# search bookmarks?
-# delete files/directories?
-# rsync files over ssh using .ssh config file?
-# install necessary packages
+# file browser for editing in vim - tick
+# search files and tunnel to nordvpn - tick
+# search bookmarks? - tick
+# delete files/directories? -to do
+# rsync files over ssh using .ssh config file? -to do
+# install necessary packages? -in progress
 
 #############################################
 # Check packages are installed
