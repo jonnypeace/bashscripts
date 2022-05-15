@@ -10,7 +10,7 @@
 
 read -p "iso text from website to check against: " check
 sha=$(sha256sum -b $1 | cut -d' ' -f1)
-if [ $check = $sha ]
+if [ "$check" = "$sha" ]
 	then echo "ISO check passed"
 	else echo "ISO check failed"
 fi
