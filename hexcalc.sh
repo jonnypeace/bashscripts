@@ -4,13 +4,13 @@
 #The reason for this is to test the HDD and clear smart errors. If the blocks cant be written to, chances are it'll need replaced.
 
 #Getting device info
-read -p "Device for checking (i.e /dev/sdb): " device
+read -rp "Device for checking (i.e /dev/sdb): " device
 #Getting current pending sector count value for info
 sect=$(sudo smartctl -A "$device" | grep Current_Pending_Sector | awk '{print $10}')
 #Getting the first self test of the LBA error, #1
 val=$(sudo smartctl -l selftest "$device" | grep "# 1" | awk '{print $10}')
 echo -e "\nCurrent_Pending_Sector Count = $sect\nLBA_of_first_error = $val\n"
-read -p "Is this a HEX value (HEX example 0x021d9f44) (y/n) ? " ans
+read -rp "Is this a HEX value (HEX example 0x021d9f44) (y/n) ? " ans
 
 #Checking if it's a hexidecimal or decimal value
 if [[ "$ans" =~ ^(yes|y)$ ]]; then
@@ -29,14 +29,14 @@ fi
 #falls between the the start and end blocks.
 sudo fdisk -lu "$device"
 echo -e "\n"
-read -p "Partition for device where block will be found (example /dev/sdb2)? " part
+read -rp "Partition for device where block will be found (example /dev/sdb2)? " part
 S=$(sudo fdisk -lu "$device" | grep "$part" | awk '{print $2}')
 
 #Determine if a file is located on this block
 echo -e "\ndebugfs HOW TO:\ndebugfs:  open $part\ndebugfs:  testb $decnum\nType q to quit.\nIf block is in use read through script instructions, or reference this website\nhttps://www.smartmontools.org/wiki/BadBlockHowto\n"
 sudo debugfs
 
-read -p "Proceed with script? (If block is in use, see link above) y/n: " good
+read -rp "Proceed with script? (If block is in use, see link above) y/n: " good
 if [[ "$good" =~ ^(yes|y)$ ]]; then
 	echo "Proceeding with script"; else
 	echo "Exiting Script"
@@ -108,7 +108,7 @@ echo -e "File System Block Number: $b\n"
 #is actually the second of the eight sectors that make up this file system block.
 
 #Correct block or leave alone?
-read -p "Write over block (y/n)? " ans
+read -rp "Write over block (y/n)? " ans
 
 if [[ "$ans" =~ ^(yes|y)$ ]]; then
 	sudo dd if=/dev/zero of="$part" bs="$B" count=1 seek="$b"
