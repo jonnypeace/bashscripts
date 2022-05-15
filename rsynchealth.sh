@@ -25,10 +25,10 @@ testmount1=$(df -h | awk '/\/drive1/{print $6}')
 testmount2=$(df -h | awk '/\/drive2/{print $6}')
 
 # If drives are not mounted, script will exit.
-if [[ -e $testmount1 || -e $testmount2 ]] ; then
+if [[ -e "$testmount1" || -e "$testmount2" ]] ; then
   echo drive sda & sdb mounted and testing...
 # Checking drive health and attributes are in good condition  
-  if [[ $a_pass != PASSED || $a_pend != 0 || $a_reall != 0 || $a_uncor != 0 || $b_pass != PASSED || $b_pend != 0 || $b_reall != 0 || $b_uncor != 0 ]] ; then
+  if [[ "$a_pass" != PASSED || "$a_pend" != 0 || "$a_reall" != 0 || "$a_uncor" != 0 || "$b_pass" != PASSED || "$b_pend" != 0 || "$b_reall" != 0 || "$b_uncor" != 0 ]] ; then
 # If one of the drives does not conform to the above arguments, no rsync takes place
     echo "Check drive health, might be time to replace one of the drives" ; else
 # If both drives pass the arguments, rsync will progress.
