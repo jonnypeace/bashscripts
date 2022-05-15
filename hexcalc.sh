@@ -6,19 +6,19 @@
 #Getting device info
 read -p "Device for checking (i.e /dev/sdb): " device
 #Getting current pending sector count value for info
-sect=$(sudo smartctl -A $device | grep Current_Pending_Sector | awk '{print $10}')
+sect=$(sudo smartctl -A "$device" | grep Current_Pending_Sector | awk '{print $10}')
 #Getting the first self test of the LBA error, #1
-val=$(sudo smartctl -l selftest $device | grep "# 1" | awk '{print $10}')
+val=$(sudo smartctl -l selftest "$device" | grep "# 1" | awk '{print $10}')
 echo -e "\nCurrent_Pending_Sector Count = $sect\nLBA_of_first_error = $val\n"
 read -p "Is this a HEX value (HEX example 0x021d9f44) (y/n) ? " ans
 
 #Checking if it's a hexidecimal or decimal value
-if [[ $ans =~ ^(yes|y)$ ]]; then
-	hexnum=$val
-	decnum=$(( 16#$hexnum ))
+if [[ "$ans" =~ ^(yes|y)$ ]]; then
+	hexnum="$val"
+	decnum=$(( 16#"$hexnum" ))
 	echo -e "\nHex Value = $hexnum & Decimal Value = $decnum\n"
 	sleep 2; else
-	decnum=$val
+	decnum="$val"
 	echo -e "\nDecimal Value = $decnum\n"
 	sleep 2
 fi
@@ -27,17 +27,17 @@ fi
 
 #Find STARTING block for partition. If multiple partitions, select the partition that
 #falls between the the start and end blocks.
-sudo fdisk -lu $device
+sudo fdisk -lu "$device"
 echo -e "\n"
 read -p "Partition for device where block will be found (example /dev/sdb2)? " part
-S=$(sudo fdisk -lu $device | grep $part | awk '{print $2}')
+S=$(sudo fdisk -lu "$device" | grep "$part" | awk '{print $2}')
 
 #Determine if a file is located on this block
 echo -e "\ndebugfs HOW TO:\ndebugfs:  open $part\ndebugfs:  testb $decnum\nType q to quit.\nIf block is in use read through script instructions, or reference this website\nhttps://www.smartmontools.org/wiki/BadBlockHowto\n"
 sudo debugfs
 
 read -p "Proceed with script? (If block is in use, see link above) y/n: " good
-if [[ $good =~ ^(yes|y)$ ]]; then
+if [[ "$good" =~ ^(yes|y)$ ]]; then
 	echo "Proceeding with script"; else
 	echo "Exiting Script"
 	exit 0
@@ -84,7 +84,7 @@ fi
 ##############################################
 
 #Getting block size. ext4 is 4096
-B=$(sudo tune2fs -l $part | grep "Block size:" | awk '{print $3}')
+B=$(sudo tune2fs -l "$part" | grep "Block size:" | awk '{print $3}')
 
 #In this case the block size is 4096 bytes. Third Step: we need to determine which
 #File System Block contains this LBA. The formula is:
@@ -95,12 +95,12 @@ B=$(sudo tune2fs -l $part | grep "Block size:" | awk '{print $3}')
 #S = Starting sector of partition as shown by fdisk -lu
 #read -p "File system partition START block size in bytes: " S
 #L = LBA of bad sector
-L=$decnum
+L="$decnum"
 #B = File system block size in bytes
 #and (int) denotes the integer part. Bash naturally uses an integer unless bc -l is used.
 
 #Calculating the file system block number
-b=$(( (($L-$S)*512)/$B ))
+b=$(( (("$L"-"$S")*512)/"$B" ))
 echo -e "\nFile System Block Number Calculation: (($L-$S)*512)/$B"
 echo -e "File System Block Number: $b\n"
 
@@ -110,8 +110,8 @@ echo -e "File System Block Number: $b\n"
 #Correct block or leave alone?
 read -p "Write over block (y/n)? " ans
 
-if [[ $ans =~ ^(yes|y)$ ]]; then
-	sudo dd if=/dev/zero of=$part bs=$B count=1 seek=$b
+if [[ "$ans" =~ ^(yes|y)$ ]]; then
+	sudo dd if=/dev/zero of="$part" bs="$B" count=1 seek="$b"
 	sync
 	echo -e "\nMight need to run a smartctl -t (short/long/offline) $part to refresh current pending sector counts"; else
 	echo "Block ignored"
