@@ -25,11 +25,11 @@ if [[ "$ans" =~ ^(yes|y)$ ]]; then
   priv=$(cat "$name"'_priv')
   psk=$(cat "$name"'_psk')
 
-  touch /etc/wireguard/configs/"$name"'.conf'
+  touch /etc/wireguard/configs/"$name".conf
 
   echo -e "[Interface]\nPrivateKey = $priv\nAddress = 10.6.0.$num/24\nListenPort = 51820\nDNS = 9.9.9.9\n[Peer]\nPublicKey = MYPUBKEY\nPresharedKey = $psk\nEndpoint = MYDNS.ORMY.IP:51820\nAllowedIPs = 0.0.0.0/0, ::0/0" >> /etc/wireguard/configs/"$name"'.conf'
 
-  pub=$(cat "$name"'_pub')
+  pub=$(cat "$name"_pub)
   echo -e "###$name###\n[peer]\nPublicKey = $pub\nPresharedKey = $psk\nAllowedIPs = 10.6.0.$num/32\n###end $name###" >> /etc/wireguard/wg0.conf
 
   systemctl start wg-quick@wg0
