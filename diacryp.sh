@@ -102,7 +102,7 @@ fi
 }
 
 # while loop for main dialog window
-while [ 1 ]
+while true
   do
   dialog --no-shadow --menu "Crypto Files" 30 60 10 1 "Create New?" 2 "Mount Existing Crypto File?" 3 "Unmount?" 0 "Exit" 2>"$temp1"
   #if [[ $? != 0 ]]
