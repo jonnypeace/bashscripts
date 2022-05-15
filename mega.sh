@@ -94,10 +94,7 @@ shorts[gitHub]="https://github.com/jonnypeace"
 shorts[linux Foundation]="https://trainingportal.linuxfoundation.org/learn/dashboard"
 shorts[amazon]="https://www.amazon.co.uk"
 shorts[ebay]="https://www.ebay.co.uk"
-shorts[proxmox Fujitsu]="https://10.10.100.20:8006"
-shorts[nextcloud Fujitsu]="https://192.168.2.244/login"
 shorts[linode]="https://cloud.linode.com/linodes"
-shorts[prime amazon]="https://www.amazon.co.uk/Amazon-Video/b/?ie=UTF8&node=3010085031&ref_=nav_cs_prime_video_baf280adf21d4b1eb2a43724550299c1"
 shorts[reddit]="https://www.reddit.com"
 shorts[udemy]="https://www.udemy.com/home/my-courses/learning/"
 shorts[linkedin]="https://www.linkedin.com/jobs/"
@@ -132,7 +129,8 @@ do
 		
 		select -a for...
 		select -b for browser bookmark launcher
-		select -v to edit in vim
+		select -e for file browsing to edit in vim
+		select -v for openvpn
 		select -h for help
 		" ;;
 		*) exit
