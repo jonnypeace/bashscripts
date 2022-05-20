@@ -35,3 +35,6 @@ echo 'line 1
 line 2 win
 line 22 lose' | awk '/line 2/{l[lines++]=$0}END{split(l[0],a);print a[3]}'
 ##################################################################################
+
+look for duplicate lines in a text file
+awk '{++a[$0]} END{for (index in a) if (a[k] > 1) print a[k], k}' textfile.txt
