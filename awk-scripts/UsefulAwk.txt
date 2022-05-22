@@ -38,3 +38,10 @@ line 22 lose' | awk '/line 2/{l[lines++]=$0}END{split(l[0],a);print a[3]}'
 
 look for duplicate lines in a text file
 awk '{++a[$0]} END{for (k in a) if (a[k] > 1) print a[k], k}' textfile.txt
+
+##################################################################################
+
+check the IP's banned on my servers using fail2ban:
+sudo fail2ban-client status | gawk '/jail list/;{l[0]=$0}END{m=substr(l[0],15);split(m,a, ", "); for (i in a) print | "sudo fail2ban-client get " a[i] " banned"}'
+with a list of jails:
+sudo fail2ban-client status | gawk '/jail list/;{l[0]=$0}END{m=substr(l[0],15);split(m,a, ", "); for (i in a) {print a[i]; print | "sudo fail2ban-client get " a[i] " banned"}}'
