@@ -60,7 +60,6 @@ function file_dir_vim {
 		then
 			cd "$fuz" || return 1
 			mapfile -d $'\0' array < <(sudo find . -maxdepth 1 -print0)
-			echo "exit code for mapfile is $? on $fuz"
 			array+=("/")
 			array+=("..")
 			array+=("$HOME")
