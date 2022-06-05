@@ -12,36 +12,71 @@
 #############################################
 # Check packages are installed
 
-if ! sudo dpkg-query -W fzf > /dev/null 2>&1
+os_detail=$(awk -F'"' '/^NAME/{print $2}' /etc/os-release)
+
+if [[ "$os_detail" == "Arch Linux" ]]
 then
-	sudo apt install fzf -y
+	os_query="sudo pacman -Q"
+	os_install="sudo pacman -S --noconfirm"
+	batcat=bat
+elif [[ "$os_detail" == "Ubuntu" ]]
+then
+	os_query="sudo dpkg-query -W"
+	os_install="sudo apt install -y"
 fi
 
-if ! sudo dpkg-query -W bat > /dev/null 2>&1
+if ! $os_query fzf > /dev/null 2>&1
 then
-	sudo apt install bat -y
+	$os_install fzf
+fi
+
+if ! $os_query  bat > /dev/null 2>&1
+then
+	$os_install bat
+fi
+
+if ! $os_query  mpv > /dev/null 2>&1
+then
+	$os_install mpv
+fi
+
+if ! $os_query  feh > /dev/null 2>&1
+then
+	$os_install feh
 fi
 
 #############################################
 # function for navigating directories, and editing files with vim
 
 function file_dir_vim {
-	array=()
-	mapfile array < <(sudo find $(pwd) -maxdepth 1)
+	mapfile -d $'\0' array < <(sudo find "$(pwd)" -maxdepth 1 -print0)
 	array+=("/")
 	array+=("..")
 	array+=("$HOME")
-	fuz=$(for val in "${array[@]}"; do echo $val; done | sort -u | fzf --preview 'batcat --color=always --style=plain {}' |  sed 's/ //')
+	fuz=$(for val in "${array[@]}"; do echo "$val" ; done | sort -u | fzf --preview "$batcat --color=always --style=plain {}")
 	while [[ -n "$fuz" ]]
 	do
 		if [[ -d "$fuz" ]]
 		then
-			cd "$fuz" || return
-			mapfile array < <(sudo find $(pwd) -maxdepth 1)
+			cd "$fuz" || return 1
+			mapfile -d $'\0' array < <(sudo find . -maxdepth 1 -print0)
+			echo "exit code for mapfile is $? on $fuz"
 			array+=("/")
 			array+=("..")
 			array+=("$HOME")
-			fuz=$(for val in "${array[@]}"; do echo $val; done | sort -u | fzf --preview 'batcat --color=always --style=plain {}' | sed 's/ //')
+			fuz=$(for val in "${array[@]}"; do echo "$val" ; done | sort -u | fzf --header="CURRENT WORKING DIRECTORY $(pwd)" --preview "$batcat --color=always --style=plain {}")
+		elif [[ "$fuz" == *.mp4 || "$fuz" == *.mkv || "$fuz" == *.MKV || "$fuz" == *.MP4 ]]
+		then
+			mpv "$fuz"
+			unset fuz
+		elif [[ "$fuz" == *.jpg || "$fuz" == *.JPG || "$fuz" == *.jpeg || "$fuz" == *.JPEG ]]
+		then
+			feh -F -d -S "$fuz"
+			unset fuz
+		elif [[ -x "$fuz" ]]
+		then
+			exec "$fuz"
+			unset fuz
 		elif [[ -w "$fuz" && -f "$fuz" ]]
 		then
 			vim "$fuz"
@@ -49,6 +84,9 @@ function file_dir_vim {
 		elif [[ -f "$fuz" ]]
 		then
 			sudo vim "$fuz"
+			unset fuz
+		else
+			echo "$fuz not valid"
 			unset fuz
 		fi
 	done
@@ -62,7 +100,7 @@ function nord_vpn {
 dir=/etc/openvpn/ovpn_udp
 
 # list ovpn files in dmenu
-vpn=$(sudo find "$dir" -maxdepth 1 -type f -iname "*.ovpn" | awk -F/ '{print $NF}' | sort | fzf --preview 'batcat --color=always --style=plain {}')
+vpn=$(sudo find "$dir" -maxdepth 1 -type f -iname "*.ovpn" | awk -F/ '{print $NF}' | sort | fzf --preview "$batcat --color=always --style=plain {}")
 
 # if vpn selected, check .ovpn config, kill existing vpn to avoid conflict, then connect with chosen vpn
 if [ "$vpn" ]
