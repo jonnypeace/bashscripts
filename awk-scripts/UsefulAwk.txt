@@ -45,3 +45,12 @@ check the IP's banned on my servers using fail2ban:
 sudo fail2ban-client status | gawk '/jail list/;{l[0]=$0}END{m=substr(l[0],15);split(m,a, ", "); for (i in a) print | "sudo fail2ban-client get " a[i] " banned"}'
 with a list of jails:
 sudo fail2ban-client status | gawk '/jail list/;{l[0]=$0}END{m=substr(l[0],15);split(m,a, ", "); for (i in a) {print a[i]; print | "sudo fail2ban-client get " a[i] " banned"}}'
+
+##################################################################################
+
+remove file name from path using / as a delimiter
+awk 'BEGIN{FS="/"; OFS="/"} {$NF=""; print}'
+awk 'sub("/[^/]*$",  "")'
+awk 'BEGIN{FS=OFS="/"} {NF--; print}'
+sed (needed to add this in, so i don't forget...
+sed 's|/[^/]*$||' 
