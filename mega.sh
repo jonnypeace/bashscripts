@@ -49,21 +49,33 @@ fi
 # function for navigating directories, and editing files with vim
 
 function file_dir_vim {
-	mapfile -d $'\0' array < <(sudo find "$(pwd)" -maxdepth 1 -print0)
+	mapfile -t array < <(sudo find "$(pwd)"/ -maxdepth 1)
 	array+=("/")
 	array+=("..")
 	array+=("$HOME")
-	fuz=$(for val in "${array[@]}"; do echo "$val" ; done | sort -u | fzf --preview "$batcat --color=always --style=plain {}")
+	fuz=$(for val in "${array[@]}"; do
+	if [[ $(printf '%s\n' "${val:0:2}") == "//" ]]
+	then
+		printf '%s\n' "${val:1}"
+	else
+		printf '%s\n' "$val"
+	fi; done | sort -u | fzf --header="CURRENT WORKING DIRECTORY $(pwd)" --preview "$batcat --color=always --style=plain {}")
 	while [[ -n "$fuz" ]]
 	do
 		if [[ -d "$fuz" ]]
 		then
 			cd "$fuz" || return 1
-			mapfile -d $'\0' array < <(sudo find . -maxdepth 1 -print0)
+			mapfile -t array < <(sudo find "$PWD"/ -maxdepth 1)
 			array+=("/")
 			array+=("..")
 			array+=("$HOME")
-			fuz=$(for val in "${array[@]}"; do echo "$val" ; done | sort -u | fzf --header="CURRENT WORKING DIRECTORY $(pwd)" --preview "$batcat --color=always --style=plain {}")
+			fuz=$(for val in "${array[@]}"; do
+			if [[ $(printf '%s\n' "${val:0:2}") == "//" ]]
+			then
+				printf '%s\n' "${val:1}"
+			else
+				printf '%s\n' "$val"
+			fi; done | sort -u | fzf --header="CURRENT WORKING DIRECTORY $(pwd)" --preview "$batcat --color=always --style=plain {}")
 		elif [[ "$fuz" == *.mp4 || "$fuz" == *.mkv || "$fuz" == *.MKV || "$fuz" == *.MP4 ]]
 		then
 			mpv "$fuz"
@@ -74,7 +86,7 @@ function file_dir_vim {
 			unset fuz
 		elif [[ -x "$fuz" ]]
 		then
-			exec "$fuz"
+			exec "$fuz" && exit
 			unset fuz
 		elif [[ -w "$fuz" && -f "$fuz" ]]
 		then
@@ -98,7 +110,7 @@ function nord_vpn {
 # directory for .ovpn files
 dir=/etc/openvpn/ovpn_udp
 
-# list ovpn files in dmenu
+# list ovpn files in fzf
 vpn=$(sudo find "$dir" -maxdepth 1 -type f -iname "*.ovpn" | awk -F/ '{print $NF}' | sort | fzf --preview "$batcat --color=always --style=plain {}")
 
 # if vpn selected, check .ovpn config, kill existing vpn to avoid conflict, then connect with chosen vpn
@@ -168,7 +180,7 @@ do
 		
 		select -a for...
 		select -b for browser bookmark launcher
-		select -e for file browsing to edit in vim
+		select -e for file browsing, edit in vim, launch applications, picture launcher, movie launcher 
 		select -v for openvpn
 		select -h for help
 		" ;;
