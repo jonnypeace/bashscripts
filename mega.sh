@@ -50,7 +50,7 @@ fi
 
 function yes-no-contin {
 	ans=$(printf '%s\n' "yes" "no" | fzf --header="Please Select if you want to continue" --margin=10%)
-	return "$ans"
+	return 
 }
 
 # function for navigating directories, and editing files with vim
