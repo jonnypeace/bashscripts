@@ -49,33 +49,21 @@ fi
 # function for navigating directories, and editing files with vim
 
 function file_dir_vim {
-	mapfile -t array < <(sudo find "$(pwd)"/ -maxdepth 1)
+	mapfile -t array < <(sudo find -L "$PWD" -maxdepth 1)
 	array+=("/")
 	array+=("..")
 	array+=("$HOME")
-	fuz=$(for val in "${array[@]}"; do
-	if [[ $(printf '%s\n' "${val:0:2}") == "//" ]]
-	then
-		printf '%s\n' "${val:1}"
-	else
-		printf '%s\n' "$val"
-	fi; done | sort -u | fzf --header="CURRENT WORKING DIRECTORY $(pwd)" --preview "$batcat --color=always --style=plain {}")
+	fuz=$(printf '%s\n' "${array[@]}" | sort -u | fzf --header="CURRENT WORKING DIRECTORY $PWD" --preview "$batcat --color=always --style=plain {}")
 	while [[ -n "$fuz" ]]
 	do
 		if [[ -d "$fuz" ]]
 		then
 			cd "$fuz" || return 1
-			mapfile -t array < <(sudo find "$PWD"/ -maxdepth 1)
+			mapfile -t array < <(sudo find -L "$PWD" -maxdepth 1)
 			array+=("/")
 			array+=("..")
 			array+=("$HOME")
-			fuz=$(for val in "${array[@]}"; do
-			if [[ $(printf '%s\n' "${val:0:2}") == "//" ]]
-			then
-				printf '%s\n' "${val:1}"
-			else
-				printf '%s\n' "$val"
-			fi; done | sort -u | fzf --header="CURRENT WORKING DIRECTORY $(pwd)" --preview "$batcat --color=always --style=plain {}")
+			fuz=$(printf '%s\n' "${array[@]}" | sort -u | fzf --header="CURRENT WORKING DIRECTORY $PWD" --preview "$batcat --color=always --style=plain {}")
 		elif [[ "$fuz" == *.mp4 || "$fuz" == *.mkv || "$fuz" == *.MKV || "$fuz" == *.MP4 ]]
 		then
 			mpv "$fuz"
