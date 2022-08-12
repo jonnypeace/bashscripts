@@ -46,8 +46,14 @@ then
 fi
 
 #############################################
-# function for navigating directories, and editing files with vim
+# function for yes no prompts to continue
 
+function yes-no-contin {
+	ans=$(printf '%s\n' "yes" "no" | fzf --header="Please Select if you want to continue" --margin=10%)
+	return "$ans"
+}
+
+# function for navigating directories, and editing files with vim
 function file_dir_vim {
 	mapfile -t array < <(sudo find -L "$PWD" -maxdepth 1)
 	array+=("/")
@@ -109,7 +115,7 @@ then
         sudo sed -i 's|auth-user-pass|auth-user-pass /etc/openvpn/auth-user.txt|' "$dir"/"$vpn"
     fi
     sudo pkill openvpn
-    sleep 1
+    wait
     sudo openvpn "$dir"/"$vpn" 
 else
     printf "%s\n" "No vpn selection" && exit 0
