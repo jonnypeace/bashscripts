@@ -2,11 +2,9 @@
 
 # todo list
 
-# 1. integrate fuzzy finding
-# 2. Consider storing the config to source data for encrypted files.
-# 3. Provide user permissions for mounting without sudo
-# 4. gpg -o HypeTrain.gpg --symmetric --cipher-algo AES256 HypeTrain
-# 5. gpg -o HypeTrain -d HypeTrain.gpg
+# 1. Provide user permissions for mounting without sudo
+# 2. Tightly integrate with cryptsetup luks for keeping files safe in case of
+#    system failure
 
 #temporary files for redirecting stderr info, plenty of excess in case this grows
 temp1=$(mktemp -t test1.XXXXXX)
@@ -36,9 +34,11 @@ trap 'for-trap' 2
 # create new encrypted file for mounting
 function createnew {
 
+# Create directory within script location directory	
 config="$PWD/cryptconfig"
 mkdir -p "$config"
 
+# Gather info for the encrypted file and mount point
 dialog --no-shadow --title "Create New Crypto" \
 --form "\n\nCtrl+c will unmount and delete decrypted file" 30 60 10 \
   "Encrpyted File Name" 1 1 "" 1 37 15 50 \
@@ -65,8 +65,12 @@ clear
 echo "File creation in progress........."
 dd if=/dev/zero of="$enfile" bs="$bsize" count="$count"
 echo
+
+# Making filesystem for file. This will mount in your location using loopback device later on.
 mkfs.ext4 "$enfile"
 wait
+
+# Encrypt your file and remove unencrypted file until you're ready to use it.
 if gpg -o "$enfile".gpg --symmetric --cipher-algo AES256 "$enfile"
 then
 	wait
@@ -83,6 +87,7 @@ fi
 # mount existing encrypted file as a directory
 function existcrypt {
 
+# Confirm selection of encrypted file to mount
 config="$PWD/cryptconfig"
 list=$(find "$config" -type f | fzf --header="
 Select/Search(type) and press ENTER: " --margin=20% --preview-window=up,25% --preview "cat {}")
@@ -93,8 +98,9 @@ enfile=$(awk 'NR==1{print}' "$list")
 mount=$(awk 'NR==4{print}' "$list")
 
 sudo mkdir -p "$mount"
-
 clear
+
+# Decrypt file and mount at location confirmed by selection above
 gpg -o "$enfile" -d "$enfile".gpg
 wait
 sudo mount "$enfile" "$mount"
@@ -110,6 +116,7 @@ clear
 # unmount existing file/directory
 function unmount {
 
+# Confirm selection of encrypted file unmount and save back into encrypted file
 config="$PWD/cryptconfig"
 list=$(find "$config" -type f | fzf --header="
 Select/Search(type) and press ENTER: " --margin=20% --preview-window=up,25% --preview "cat {}")
@@ -119,6 +126,7 @@ mount=$(awk 'NR==4{print}' "$list")
 
 clear
 
+# Unmount, and encrypt
 if sudo umount "$mount"
 then
 	wait
