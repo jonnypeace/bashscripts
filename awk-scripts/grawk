@@ -34,34 +34,34 @@
 BEGIN{
 	# start string search
 	start = ARGV[1]
-    delete ARGV[1]
+	delete ARGV[1]
 	
 	# does start have a number value option (flag) between 1-9, if so add a num1 counter to other ARGVs
-	if ( ARGV[2] ~ "-[1-9]{1}" ) {
-		startappear = substr(ARGV[2],2,2)
+	if ( ARGV[2] ~ "[1-9]{1}" ) {
+		startappear = ARGV[2]
 		num1 += 1
 		delete ARGV[2]
 		}
 	
 	# Last string pattern to extract up to, from the start string
-    last = ARGV[2 + num1]
+	last = ARGV[2 + num1]
 	
 	# length of the last string to be used at the end to calculate string size
 	len=length(last)
-    delete ARGV[2 + num1]
+	delete ARGV[2 + num1]
 	
 	# Check if last string has a number value with a fancy delimiter. The reason for the alternative delimeter, is to use this
 	# to remove, then replace. For instance, if you put a minus delimiter in -2, this code will use this to replace the last character,
 	# but also use this to replace all instances of the minus '-'. The idea is, if the text uses a minus in abundance in the text file
 	# you should probably swap it out for a special character that's not in use. I am probably going to look at a better method for this, but figured it
 	# might also be a useful hacky feature.
-	if (ARGV[3 + num1] ~ "[-+~/.,?@<>|#=*][1-9]{1}" ) {
+	if (ARGV[3 + num1] ~ "[-+~/¬,?@<_>=][$1-9]{1}" ) {
 		lastappear = substr(ARGV[3 + num1],2,2)
 		delim = substr(ARGV[3 + num1],1,1)
 		delete ARGV[3 + num1]
 		num1 += 1
 		}
-	
+
 	# Including an exc argument at the end of the command line will exclude the last character, unless last == "$"
 	# If last == "$" the line printed will begin at start, finish at the end of the line.
 	# If the last character is a /, and $ is not included with exc, then a search of /home/user/ will turn into /home/user 
@@ -89,35 +89,36 @@ BEGIN{
 	if ( startappear == 8 ) {$0 = gensub(start,"",1,gensub(start,"",1,gensub(start,"",1,gensub(start,"",1,gensub(start,"",1,gensub(start,"",1,gensub(start,"",1)))))))}
 	if ( startappear == 9 ) {$0 = gensub(start,"",1,gensub(start,"",1,gensub(start,"",1,gensub(start,"",1,gensub(start,"",1,gensub(start,"",1,gensub(start,"",1,gensub(start,"",1))))))))}
 
-	if ( lastappear == 2 ) {$0 = gensub(last,delim,1)}
-	if ( lastappear == 3 ) {$0 = gensub(last,delim,1,gensub(last,delim,1))}
-	if ( lastappear == 4 ) {$0 = gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1)))}
-	if ( lastappear == 5 ) {$0 = gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1))))}
-	if ( lastappear == 6 ) {$0 = gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1)))))}
-	if ( lastappear == 7 ) {$0 = gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,gensub(last,delim,1))))))}
-	if ( lastappear == 8 ) {$0 = gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1)))))))}
-	if ( lastappear == 9 ) {$0 = gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1))))))))}
-
 	$0 ~ start && $0 ~ last && b[lines++]=$0 
 }
 
 # This below uses the data above to index and format the desired (hopefully) string output.
 END{
 	for (i in b) {
-			if ( last == "$" ) {
-				n=index(b[i],start)
-    			z=substr(b[i],n)
-				if (z != "") {
-					print "\033[33m"z"\033[0m"    		
-				}    		
-			} else {
-				n=index(b[i],start)
-   				c=index(b[i],last)
-    			z=substr(b[i],n,c-n+len)
-				gsub(delim,last,z)
-				if (z != "") {
-					print "\033[33m"z"\033[0m"    		
-				}    		
+		if ( last == "$" || lastappear == "$") {
+			n=index(b[i],start)
+			z=substr(b[i],n)
+			if (z != "") {
+				print "\033[33m"z"\033[0m"    		
+			}    		
+		} else {
+			n=index(b[i],start)
+			t=substr(b[i],n)
+			if ( lastappear == 1 ) {f=index(t,start) ; c=index(t,last); z=substr(t,f,c+len-1) ; if (z != "") print "\033[33m"z"\033[0m" ; continue}
+			if ( lastappear == 2 ) {g = gensub(last,delim,1,t)}
+			if ( lastappear == 3 ) {g = gensub(last,delim,1,gensub(last,delim,1,t))}
+			if ( lastappear == 4 ) {g = gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,t)))}
+			if ( lastappear == 5 ) {g = gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,t))))}
+			if ( lastappear == 6 ) {g = gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,t)))))}
+			if ( lastappear == 7 ) {g = gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,gensub(last,delim,1,t))))))}
+			if ( lastappear == 8 ) {g = gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,t)))))))}
+			if ( lastappear == 9 ) {g = gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,t))))))))}
+			c=index(g,last)
+			z=substr(g,1,c+len-1)
+			gsub(delim,last,z)
+			if (z != "") {
+				print "\033[33m"z"\033[0m"    		
 			}
+		}
 	}
 }
