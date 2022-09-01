@@ -2,24 +2,26 @@
 #
 # Usage:
 # on the commandline
-# ./grawk start-string [not optional flag] end-string [not optional flag] [optional exc]
+#
+# Put grawk into your /usr/local/bin path, and call without ./
+# grawk [start keyword search]  [start position Integar] [end of line character/word] [end position integar (or $ for end of line)] ["inc"/"exc" to include 1 or exclude 1 character] file
 # 
-# ./grawk CRON -1 ")" -2 /var/log/syslog 
+# ./grawk CRON 1 ")" 2 /var/log/syslog 
 # OUTPUT: This will search for the first instance CRON as a starting string up to the second instance of ")" from syslog
 # 
-# ./grawk CRON -1 $ /var/log/syslog 
+# ./grawk CRON 1 $ /var/log/syslog 
 # OUTPUT: Search for first instance of CRON to end of the line from syslog
 #
-# ./grawk root -1 "/" -1 exc /etc/passwd
+# ./grawk root 1 "/" 1 exc /etc/passwd
 # OUTPUT:
 # root:x:0:0:root:
 # root:x:524288:524288::
 #
-# ./grawk root -1 "/" -2 exc /etc/passwd
+# ./grawk root 1 "/" 2 exc /etc/passwd
 # root:x:0:0:root:/root:
 # root:x:524288:524288::/nonexistent:
 #
-# ./grawk dns -1 , -1 exc /etc/passwd
+# ./grawk dns 1 "," 1 exc /etc/passwd
 # OUTPUT:
 # dnsmasq:x:112:65534:dnsmasq
 # dnsmasq:x:132:141:Libvirt Dnsmasq
@@ -29,7 +31,6 @@
 # root:x:0:0:root:/root:/bin/bash
 # root:/usr/sbin/nologin
 # root:x:524288:524288::/nonexistent:/usr/bin/false
-
 
 BEGIN{
 	# start string search
@@ -75,13 +76,13 @@ BEGIN{
 }
 {
 	# Ok, i really wanted this to work with a loop, but my loops were problematic, and i think they kept resetting. I will revisit as i learn.
-	# What this section does, is look for the start flag value, i.e. grawk root -2 $ /etc/passwd will use the second instance root is found in a line,
+	# What this section does, is look for the start flag value, i.e. grawk root 2 $ /etc/passwd will use the second instance root is found in a line,
 	# and with the $ flag, it'll print to the end of line.
-	# grawk root -2 "/" -1 will look for the second instance of root in a line, and print up to the first "/"
-	# grawk root -2 "/" -1  exc , will look for the second instance of root in a line, and print up to the first "/", excluding the last character "/"
+	# grawk root 2 "/" 1 will look for the second instance of root in a line, and print up to the first "/"
+	# grawk root 2 "/" 1  exc , will look for the second instance of root in a line, and print up to the first "/", excluding the last character "/"
 	# There is another hacky thing you can do if you just want the whole line, and place a period before the start search. I'm looking to perhaps add this
 	# in properly so it also works up to an end character rather than end of line.
-	# Note: == 1 is not included because the first instance is the default, but the -1 flag is still required
+	# Note: == 1 is not included because the first instance is the default, but the 1 flag is still required
 	
 	if ( startappear == 2 ) {$0 = gensub(start,"",1)}
 	if ( startappear == 3 ) {$0 = gensub(start,"",1,gensub(start,"",1))}
@@ -115,6 +116,7 @@ END{
 		} else {
 			n=index(b[i],start)
 			t=substr(b[i],n)
+			# This section needs to occur during once the start of the string has been established, i.e. indexed and substr.
 			if ( lastappear == 1 ) {f=index(t,start) ; c=index(t,last); z=substr(t,f,c+len-1) ; if (z != "") print "\033[33m"z"\033[0m" ; continue}
 			if ( lastappear == 2 ) {g = gensub(last,delim,1,t)}
 			if ( lastappear == 3 ) {g = gensub(last,delim,1,gensub(last,delim,1,t))}
