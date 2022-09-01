@@ -4,7 +4,7 @@
 # on the commandline
 #
 # Put grawk into your /usr/local/bin path, and call without ./
-# grawk [start keyword search]  [start position Integar] [end of line character/word] [end position integar (or $ for end of line)] ["inc"/"exc" to include 1 or exclude 1 character] file
+# grawk [start keyword search]  [start position Integar] [end of line character/word] [end position integar (or $ for en0d of line)] ["inc"/"exc" to include 1 or exclude 1 character] file
 # 
 # ./grawk CRON 1 ")" 2 /var/log/syslog 
 # OUTPUT: This will search for the first instance CRON as a starting string up to the second instance of ")" from syslog
@@ -31,6 +31,11 @@
 # root:x:0:0:root:/root:/bin/bash
 # root:/usr/sbin/nologin
 # root:x:524288:524288::/nonexistent:/usr/bin/false
+#
+# There is another hacky thing you can do if you just want the whole line, and place a period before the start search.
+# grawk .CRON $ /var/log/syslog
+# or up to the 2nd bracket )
+# grawk .CRON 1 ")" 2 /var/log/syslog
 
 BEGIN{
 	# start string search
@@ -51,11 +56,7 @@ BEGIN{
 	len=length(last)
 	delete ARGV[2 + num1]
 	
-	# Check if last string has a number value with a fancy delimiter. The reason for the alternative delimeter, is to use this
-	# to remove, then replace. For instance, if you put a minus delimiter in -2, this code will use this to replace the last character,
-	# but also use this to replace all instances of the minus '-'. The idea is, if the text uses a minus in abundance in the text file
-	# you should probably swap it out for a special character that's not in use. I am probably going to look at a better method for this, but figured it
-	# might also be a useful hacky feature.
+	# instance number for end character/word 
 	if (ARGV[3 + num1] ~ "[$1-9]{1}" ) {
 		lastappear = ARGV[3 + num1]
 		delete ARGV[3 + num1]
@@ -64,7 +65,8 @@ BEGIN{
 
 	# Including an exc argument at the end of the command line will exclude the last character, unless last == "$"
 	# If last == "$" the line printed will begin at start, finish at the end of the line.
-	# If the last character is a /, and $ is not included with exc, then a search of /home/user/ will turn into /home/user 
+	# If the last charactaer is a /, and $ is not included with exc, then a search of /home/user/ will turn into /home/user 
+	# inc is the opposite of exc
 	if (ARGV[3 + num1] == "exc") {
 		len -= 1
 		delete ARGV[3 + num1]
@@ -80,8 +82,6 @@ BEGIN{
 	# and with the $ flag, it'll print to the end of line.
 	# grawk root 2 "/" 1 will look for the second instance of root in a line, and print up to the first "/"
 	# grawk root 2 "/" 1  exc , will look for the second instance of root in a line, and print up to the first "/", excluding the last character "/"
-	# There is another hacky thing you can do if you just want the whole line, and place a period before the start search. I'm looking to perhaps add this
-	# in properly so it also works up to an end character rather than end of line.
 	# Note: == 1 is not included because the first instance is the default, but the 1 flag is still required
 	
 	if ( startappear == 2 ) {$0 = gensub(start,"",1)}
@@ -94,7 +94,8 @@ BEGIN{
 	if ( startappear == 9 ) {$0 = gensub(start,"",1,gensub(start,"",1,gensub(start,"",1,gensub(start,"",1,gensub(start,"",1,gensub(start,"",1,gensub(start,"",1,gensub(start,"",1))))))))}
 
 	$0 ~ start && $0 ~ last && b[lines++]=$0 
-	# delim below to help separate and reintroduce into final output.
+
+	# delim with inrefrequent characters to help separate and reintroduce into final output.
 	if (! /"¬"/ ) {
 		delim="¬"
 	} else if (! /"¶"/ ) {
@@ -116,7 +117,7 @@ END{
 		} else {
 			n=index(b[i],start)
 			t=substr(b[i],n)
-			# This section needs to occur during once the start of the string has been established, i.e. indexed and substr.
+			# This section needs to occur once the start of the string has been established, i.e. indexed and substr.
 			if ( lastappear == 1 ) {f=index(t,start) ; c=index(t,last); z=substr(t,f,c+len-1) ; if (z != "") print "\033[33m"z"\033[0m" ; continue}
 			if ( lastappear == 2 ) {g = gensub(last,delim,1,t)}
 			if ( lastappear == 3 ) {g = gensub(last,delim,1,gensub(last,delim,1,t))}
