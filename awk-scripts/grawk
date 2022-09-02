@@ -4,7 +4,7 @@
 # on the commandline
 #
 # Put grawk into your /usr/local/bin path, and call without ./
-# grawk [start keyword search]  [start position Integar] [end of line character/word] [end position integar (or $ for en0d of line)] ["inc"/"exc" to include 1 or exclude 1 character] file
+# grawk [start keyword search]  [start position Integar] [end of line character/word] [end position integar (or $ for end of line)] ["inc"/"exc" to include 1 or exclude 1 character] file
 # 
 # ./grawk CRON 1 ")" 2 /var/log/syslog 
 # OUTPUT: This will search for the first instance CRON as a starting string up to the second instance of ")" from syslog
@@ -31,11 +31,6 @@
 # root:x:0:0:root:/root:/bin/bash
 # root:/usr/sbin/nologin
 # root:x:524288:524288::/nonexistent:/usr/bin/false
-#
-# There is another hacky thing you can do if you just want the whole line, and place a period before the start search.
-# grawk .CRON $ /var/log/syslog
-# or up to the 2nd bracket )
-# grawk .CRON 1 ")" 2 /var/log/syslog
 
 BEGIN{
 	# start string search
@@ -77,21 +72,17 @@ BEGIN{
 		}
 }
 {
-	# Ok, i really wanted this to work with a loop, but my loops were problematic, and i think they kept resetting. I will revisit as i learn.
 	# What this section does, is look for the start flag value, i.e. grawk root 2 $ /etc/passwd will use the second instance root is found in a line,
 	# and with the $ flag, it'll print to the end of line.
 	# grawk root 2 "/" 1 will look for the second instance of root in a line, and print up to the first "/"
 	# grawk root 2 "/" 1  exc , will look for the second instance of root in a line, and print up to the first "/", excluding the last character "/"
+	# There is another hacky thing you can do if you just want the whole line, and place a period before the start search.
 	# Note: == 1 is not included because the first instance is the default, but the 1 flag is still required
 	
-	if ( startappear == 2 ) {$0 = gensub(start,"",1)}
-	if ( startappear == 3 ) {$0 = gensub(start,"",1,gensub(start,"",1))}
-	if ( startappear == 4 ) {$0 = gensub(start,"",1,gensub(start,"",1,gensub(start,"",1)))}
-	if ( startappear == 5 ) {$0 = gensub(start,"",1,gensub(start,"",1,gensub(start,"",1,gensub(start,"",1))))}
-	if ( startappear == 6 ) {$0 = gensub(start,"",1,gensub(start,"",1,gensub(start,"",1,gensub(start,"",1,gensub(start,"",1)))))}
-	if ( startappear == 7 ) {$0 = gensub(start,"",1,gensub(start,"",1,gensub(start,"",1,gensub(start,"",1,gensub(start,"",gensub(start,"",1))))))}
-	if ( startappear == 8 ) {$0 = gensub(start,"",1,gensub(start,"",1,gensub(start,"",1,gensub(start,"",1,gensub(start,"",1,gensub(start,"",1,gensub(start,"",1)))))))}
-	if ( startappear == 9 ) {$0 = gensub(start,"",1,gensub(start,"",1,gensub(start,"",1,gensub(start,"",1,gensub(start,"",1,gensub(start,"",1,gensub(start,"",1,gensub(start,"",1))))))))}
+	for (m=2 ; m<=startappear ; m++) {
+		$0 = gensub(start,"",1)
+		}
+
 
 	$0 ~ start && $0 ~ last && b[lines++]=$0 
 
@@ -118,15 +109,11 @@ END{
 			n=index(b[i],start)
 			t=substr(b[i],n)
 			# This section needs to occur once the start of the string has been established, i.e. indexed and substr.
-			if ( lastappear == 1 ) {f=index(t,start) ; c=index(t,last); z=substr(t,f,c+len-1) ; if (z != "") print "\033[33m"z"\033[0m" ; continue}
-			if ( lastappear == 2 ) {g = gensub(last,delim,1,t)}
-			if ( lastappear == 3 ) {g = gensub(last,delim,1,gensub(last,delim,1,t))}
-			if ( lastappear == 4 ) {g = gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,t)))}
-			if ( lastappear == 5 ) {g = gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,t))))}
-			if ( lastappear == 6 ) {g = gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,t)))))}
-			if ( lastappear == 7 ) {g = gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,gensub(last,delim,1,t))))))}
-			if ( lastappear == 8 ) {g = gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,t)))))))}
-			if ( lastappear == 9 ) {g = gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,gensub(last,delim,1,t))))))))}
+			if ( lastappear == 1 ) {f=index(t,start) ; c=index(t,last); z=substr(t,1,c+len-1) ; if (z != "") print "\033[33m"z"\033[0m" ; continue}
+			g = gensub(last,delim,1,t)
+			for (m=3 ; m<=lastappear ; m++) {
+				g = gensub(last,delim,1,g)
+				}
 			c=index(g,last)
 			z=substr(g,1,c+len-1)
 			gsub(delim,last,z)
