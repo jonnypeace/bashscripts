@@ -90,7 +90,7 @@ function existcrypt {
 # Confirm selection of encrypted file to mount
 config="$PWD/cryptconfig"
 list=$(find "$config" -type f | fzf --header="
-Select/Search(type) and press ENTER: " --margin=20% --preview-window=up,25% --preview "cat {}")
+Select/Search(type) and press ENTER: " --margin=20% --preview-window=up:25% --preview "cat {}")
 
 if [[ ! $list ]] ; then return ; fi
 
@@ -119,7 +119,7 @@ function unmount {
 # Confirm selection of encrypted file unmount and save back into encrypted file
 config="$PWD/cryptconfig"
 list=$(find "$config" -type f | fzf --header="
-Select/Search(type) and press ENTER: " --margin=20% --preview-window=up,25% --preview "cat {}")
+Select/Search(type) and press ENTER: " --margin=20% --preview-window=up:25% --preview "cat {}")
 if [[ ! $list ]] ; then return ; fi
 enfile=$(awk 'NR==1{print}' "$list")
 mount=$(awk 'NR==4{print}' "$list")
