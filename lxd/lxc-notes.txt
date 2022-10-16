@@ -1,0 +1,120 @@
+
+# Docker cant run on zfs
+docker storage list # you'll see storage pools here.
+
+# Create a pool called docker with btrfs
+lxc storage create docker btrfs
+
+lxc launch images:ubuntu/22.04 fast-ubuntu
+
+lxc storage volume create docker fast-ubuntu
+
+lxc config device add fast-ubuntu docker disk pool=docker source=fast-ubuntu path=/var/lib/docker
+
+lxc config set fast-ubuntu security.nesting=true security.syscalls.intercept.mknod=true security.intercept.setxattr=true
+
+lxc restart fast-ubuntu
+
+lxc exec fast-ubuntu bash
+
+apt update && apt upgrade -y
+
+sudo apt-get update
+sudo apt-get install \
+   ca-certificates \
+   curl \
+   gnupg \
+   lsb-release
+
+mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+echo \
+"deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+$(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+
+# test docker install
+docker run -it ubuntu bash
+exit
+lxc list fast-ubuntu # for ip
+
+# https://www.youtube.com/watch?v=TmGvbXfwJEA&t=1138s << video for lxd networking
+
+lxc network list
+
+# inside lxc container, test connectivity..
+nc -l -p 1234
+
+# and on host (use this later to test after ufw and ip routes are added)..
+nc -v 10.165.103.128 1234
+
+# on ubuntu router
+
+sudo ip -4 route add 10.165.103.0/24 via 10.10.100.60
+
+# The above is temporary for the ubuntu router. To add permanent add this to netplan under br0
+
+        routes:
+          - to: 10.165.103.0/24 # This is my acer laptop lxd
+            via: 10.10.100.60 # This is my acer laptop ip
+
+
+# where 10.165... address is the subnet for the lxd virbr0 and 10.10.100.60 is the ip of the lxd host.
+
+# if ufw is active on router, which it should be..
+
+sudo ufw route allow in on br0.10 to 10.165.103.0/24
+
+# Another way inside the host itself is to assign a macvlan. in this instance, it appears to use a physical nic and not br0. enx000acd3e198b interface is up on this ubuntu bridge
+
+lxc config device add fast-ubuntu eth0 nic nictype=macvlan parent=enx000acd3e198b name=eth0
+
+# if this fails, it might be the nic that doesn't support it, so instead use this after trying the above, or the below won't work..
+
+lxc config device set fast-ubuntu eth0 parent=br0
+
+# check config
+lxc config show fast-ubuntu
+
+# edit config to bridged instead of macvlan
+lxc config edit fast-ubuntu
+
+# to move back to the virbr0 by lxd
+lxc config device remove fast-ubuntu eth0
+
+# override ip address of lxd container
+
+lxc config device override fast-ubuntu eth0 - think this only works when on lxd virbr0 ipv4.address=10.165.103.200
+
+# this adds a listen path proxy to container. www can be any name
+# Because the ip is static and it is a nat, the host effectively becomes the router
+lxc config device add fast-ubuntu www proxy listen=tcp:10.10.100.65:1234 connect=tcp:0.0.0.0:1234 nat=true
+
+# to remove the above
+lxc config device remove fast-ubuntu www
+
+# Nearly the same above but without the nat...
+lxc config device add fast-ubuntu www proxy listen=tcp:10.10.100.65:1234 connect=tcp:0.0.0.0:1234
+
+# using proxy tcp connection - this will show ip address of user trying to access the container (in the logs), rather than the host ip like above. This is called a proxy header.
+lxc config device add fast-ubuntu www proxy listen=tcp:10.10.100.65:1234 connect=tcp:0.0.0.0:1234 proxy_protocol=true
+
+# you can proxy over unix socket as well, which looks very unique.
+lxc config device add fast-ubuntu www proxy listen=tcp:10.10.100.65:1234 connect=unix:/tmp/foo.sock
+
+# in the container run this..
+nc -U -l /tmp/foo.sock
+
+# So the idea of the above would be to configure apache, nginx etc to listen on this socket.
+
+# to go back to lxd bridge
+lxc config device remove fast-ubuntu eth0
+
+# So in order of options starting with the best
+# 1. Configure router to route traffic to the lxd subnet via host ip
+# 2. Set up a bridge on the host and use a bridge with lxd (wont work on wifi)
+# 3. Set up a macvlan (won't work on wifi)
+# 4. proxy types listed above.
