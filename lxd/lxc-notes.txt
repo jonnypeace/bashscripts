@@ -118,3 +118,58 @@ lxc config device remove fast-ubuntu eth0
 # 2. Set up a bridge on the host and use a bridge with lxd (wont work on wifi)
 # 3. Set up a macvlan (won't work on wifi)
 # 4. proxy types listed above.
+
+# add network shares mounted on host
+
+lxc config device add fast-ubuntu nfsshare disk source=/mnt/shares/ path=/mnt/nfs
+
+# Use this to map a home directory from the host, otherwise leave
+lxc config set fast-ubuntu raw.idmap "both 1000 1000"
+lxc restart fast-ubuntu
+
+# add gpu for render group, video not necessary
+grep -E "video|render" /etc/group
+lxc config device add fast-ubuntu gpu gpu gid=109
+ls -/dev/dri # check in container also
+
+# install on both host and container, if all goes to plan it should work by end of instructions
+apt install intel-gpu-tools vainfo
+
+# Check if container is priviliged, will say true if it is
+lxc config get fast-ubuntu security.privileged
+
+# if not true, make it priviliged
+lxc config set fast-ubuntu security.privileged=true
+lxc restart fast-ubuntu
+
+##### INSIDE CONTAINER
+apt update && apt upgrade -y
+
+# manpages are always awesome, ssh server also, and the other four help add the repo's
+apt install manpages man-db openssh-server apt-transport-https software-properties-common gpg curl
+
+curl -fsSL https://repo.jellyfin.org/ubuntu/jellyfin_team.gpg.key | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/debian-jellyfin.gpg
+
+echo "deb [arch=$( dpkg --print-architecture )] https://repo.jellyfin.org/ubuntu $( lsb_release -c -s ) main" | sudo tee /etc/apt/sources.list.d/jellyfin.list
+
+add-apt-repository universe
+
+apt update
+apt install jellyfin intel-gpu-tools vainfo
+
+/usr/lib/jellyfin-ffmpeg/vainfo | grep iHD
+
+ls -l /dev/dri # check which group the render is. 
+usermod -aG render jellyfin # definitely need
+usermod -aG kvm jellyfin # from the ouput above with ls -l
+
+# check if move is using gpu
+ps aux | grep ffmpeg | grep accel # never worked, but...
+
+intel_gpu_top # this one does work and shows signs of use.
+
+vainfo # should output available codecs etc
+
+
+
+
