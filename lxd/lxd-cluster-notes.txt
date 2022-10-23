@@ -1,0 +1,72 @@
+# config for first lxd member
+root@ubuntu1:~# lxd init
+Would you like to use LXD clustering? (yes/no) [default=no]: yes
+What IP address or DNS name should be used to reach this node? [default=10.10.100.41]:
+Are you joining an existing cluster? (yes/no) [default=no]:
+What name should be used to identify this node in the cluster? [default=ubuntu1]:
+Setup password authentication on the cluster? (yes/no) [default=no]:
+Do you want to configure a new local storage pool? (yes/no) [default=yes]:
+Name of the storage backend to use (dir, lvm, zfs, btrfs) [default=zfs]:
+Create a new ZFS pool? (yes/no) [default=yes]:
+Would you like to use an existing empty block device (e.g. a disk or partition)? (yes/no) [default=no]:
+Size in GiB of the new loop device (1GiB minimum) [default=10GiB]: 40
+Do you want to configure a new remote storage pool? (yes/no) [default=no]:
+Would you like to connect to a MAAS server? (yes/no) [default=no]:
+Would you like to configure LXD to use an existing bridge or host interface? (yes/no) [default=no]: yes
+Name of the existing bridge or host interface: enp1s0
+Would you like stale cached images to be updated automatically? (yes/no) [default=yes]:
+Would you like a YAML "lxd init" preseed to be printed? (yes/no) [default=no]:
+
+# config for other members
+root@ubuntu2:~# lxd init
+Would you like to use LXD clustering? (yes/no) [default=no]: yes
+What IP address or DNS name should be used to reach this node? [default=10.10.100.42]:
+Are you joining an existing cluster? (yes/no) [default=no]: yes
+Do you have a join token? (yes/no/[token]) [default=no]: ADD YOUR KEY 
+All existing data is lost when joining a cluster, continue? (yes/no) [default=no] yes
+Choose "size" property for storage pool "local":
+Choose "source" property for storage pool "local":
+Choose "zfs.pool_name" property for storage pool "local":
+Would you like a YAML "lxd init" preseed to be printed? (yes/no) [default=no]:
+
+# to see all nodes
+lxc cluster list
+
+# set up remote connection on ubuntu1
+lxc config set core.trust_password jphome
+lxc list # check ip for ubuntu1
+
+# on ubuntu laptop, add remote connection
+lxc remote add ubuntu1 10.10.100.41
+lxc remote switch ubuntu1 - any subsequent reboots will require this
+
+# add some containers
+lxc launch images:ubuntu/22.04 jellyfin
+lxc launch images:ubuntu/22.04 fast-ubuntu
+lxc list # to see the distributed containers
+
+# see size of storage pool for lxd
+lxc storage info lxd_storage_pool
+
+#connect to container
+lxc exec fast-ubuntu bash
+
+# to launc a lxd vm on a specific node
+lxc launch images:ubuntu/22.04/cloud ubuntu-vm1 --vm --target ubuntu3
+
+# after creating one virtual machine, that node will be faster at creating another because of zfs and duplication
+
+# instruct to shutdown instances
+lxc cluster evacuate ubuntu3
+
+# bring back up instances
+lxc cluster restore ubuntu3
+
+# when shuting down instances like above, you can tell lxd to move the instances to another node by default, rather than just stopping them
+lxc profile set default cluster.evacuate migrate
+
+# if currently running vms complain about being updated because they are running, it's ok, the profile will still be updated.. see below.
+
+lxc profile show default
+
+# now when you evacuate and restore, migration will happen automatically.

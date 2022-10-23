@@ -142,6 +142,10 @@ lxc config get fast-ubuntu security.privileged
 lxc config set fast-ubuntu security.privileged=true
 lxc restart fast-ubuntu
 
+# You don't need a priviliged container with gpu in lxd. Nesting will suffice....
+lxc config set fast-ubuntu security.nesting=true
+lxc restart fast-ubuntu
+
 ##### INSIDE CONTAINER
 apt update && apt upgrade -y
 

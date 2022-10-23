@@ -1,0 +1,15 @@
+# install plugins for lxd ansible
+ansible-galaxy collection install community.general -f
+
+# update ansible for community general
+apt install ansible-core
+
+# create cfg and hosts.yaml
+
+# shows a tree
+ansible-inventory --graph
+
+# -l local limits to local machine
+ansible-playbook install.yaml -l local
+
+Will look at adding a playbook repo for LXD, jellyfin, wireguard (for reverse proxy)
