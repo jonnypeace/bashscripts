@@ -32,6 +32,7 @@ if [[ "$ans" =~ ^(yes|y)$ ]]; then
 	Address = 10.6.0.$num/24
 	ListenPort = 51820
 	DNS = 9.9.9.9
+  PersistentKeepalive = 25
 	[Peer]
 	PublicKey = MYPUBKEY
 	PresharedKey = $psk
