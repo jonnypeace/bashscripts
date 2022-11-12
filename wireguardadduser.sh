@@ -23,6 +23,7 @@ if [[ "$ans" =~ ^(yes|y)$ ]]; then
 	wg genpsk > "$name"'_psk'
 	priv=$(cat "$name"'_priv')
 	psk=$(cat "$name"'_psk')
+	server_pub=$(< publickey)
 
 	touch /etc/wireguard/configs/"$name".conf
 
@@ -32,9 +33,9 @@ if [[ "$ans" =~ ^(yes|y)$ ]]; then
 	Address = 10.6.0.$num/24
 	ListenPort = 51820
 	DNS = 9.9.9.9
-  PersistentKeepalive = 25
+	PersistentKeepalive = 25
 	[Peer]
-	PublicKey = MYPUBKEY
+	PublicKey = $server_pub
 	PresharedKey = $psk
 	Endpoint = MYDNS.ORMY.IP:51820
 	AllowedIPs = 0.0.0.0/0, ::0/0
@@ -45,7 +46,7 @@ if [[ "$ans" =~ ^(yes|y)$ ]]; then
 	cat <<- EOF >> /etc/wireguard/wg0.conf
 	###$name###
 	[peer]
- 	PublicKey = $pub
+	PublicKey = $pub
 	PresharedKey = $psk
 	AllowedIPs = 10.6.0.$num/32
 	###end $name### 
