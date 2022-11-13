@@ -33,12 +33,12 @@ if [[ "$ans" =~ ^(yes|y)$ ]]; then
 	Address = 10.6.0.$num/24
 	ListenPort = 51820
 	DNS = 9.9.9.9
-	PersistentKeepalive = 25
 	[Peer]
 	PublicKey = $server_pub
 	PresharedKey = $psk
 	Endpoint = MYDNS.ORMY.IP:51820
 	AllowedIPs = 0.0.0.0/0, ::0/0
+	PersistentKeepalive = 25
 	EOF
 
 	pub=$(cat "$name"_pub)
