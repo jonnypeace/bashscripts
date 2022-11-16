@@ -12,6 +12,17 @@ if [[ ! -f privatekey && ! -f publickey ]] ; then
   echo 'Created new Server Keys'
 fi
 
+# Create server side wg0.conf file
+if [[ ! -f wg0.conf ]] ; then
+cat << EOF > wg0.conf
+[Interface]
+Address = 10.6.0.1/24
+ListenPort = 51820
+PrivateKey = $(< privatekey)
+EOF
+if [[ $? -eq 0 ]]; then echo "wg0.conf created" ; fi
+fi
+
 #ubuntu server doesn't allow the edit of the wg0.conf file unless wireguard service has stopped running.
 read -rp "Warning, this script will halt your wireguard server while adding new users. Proceed? [y/N]? " ans
 mkdir -p /etc/wireguard/configs
