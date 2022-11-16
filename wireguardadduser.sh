@@ -6,8 +6,11 @@
 #check the wg0.conf file to see which clients are using which IP's.
 #also update your endpoint ip address, or i use dynamic dns for this,line 38 
 #choose which DNS you'd like to use line 34
-#lastly, you'll need the publickey from your server which is added to line 36 - use comment below to generate your server keys.
-##umask 077; wg genkey | tee privatekey | wg pubkey > publickey
+
+if [[ ! -f privatekey && ! -f publickey ]] ; then
+  umask 077; wg genkey | tee privatekey | wg pubkey > publickey
+  echo 'Created new Server Keys'
+fi
 
 #ubuntu server doesn't allow the edit of the wg0.conf file unless wireguard service has stopped running.
 read -rp "Warning, this script will halt your wireguard server while adding new users. Proceed? [y/N]? " ans
