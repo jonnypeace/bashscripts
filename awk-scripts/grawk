@@ -78,14 +78,26 @@ BEGIN{
 	# grawk root 2 "/" 1  exc , will look for the second instance of root in a line, and print up to the first "/", excluding the last character "/"
 	# There is another hacky thing you can do if you just want the whole line, and place a period before the start search.
 	# Note: == 1 is not included because the first instance is the default, but the 1 flag is still required
-	
+
 	for (m=2 ; m<=startappear ; m++) {
 		$0 = gensub(start,"",1)
 		}
 
-
+	if ( start == "[" ) {
+		start="\\["
+		}
+	if ( last == "]" ) {
+		last="\\]"
+		}
+	
 	$0 ~ start && $0 ~ last && b[lines++]=$0 
 
+	if ( start == "\\[" ) {
+		start="["
+		}
+	if ( last == "\\]" ) {
+		last="]"
+		}
 	# delim with inrefrequent characters to help separate and reintroduce into final output.
 	if (! /"¬"/ ) {
 		delim="¬"
