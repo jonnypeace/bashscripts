@@ -25,5 +25,7 @@ done
 
 if [[ $(sha256sum -b "$filename" | cut -d ' ' -f1) == "$sums" ]]
 then
-  echo 'We are good'
+  echo 'We are good, sha sum check passed'
+else
+  echo 'ISO failed sha sum check'
 fi
