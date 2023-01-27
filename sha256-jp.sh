@@ -23,6 +23,8 @@ done
 # Not required, for just one iso
 # shift $(( OPTIND - 1 ))
 
+if [[ -z $sums || -z $filename ]] ; then exit ; fi
+
 if [[ $(sha256sum -b "$filename" | cut -d ' ' -f1) == "$sums" ]]
 then
   echo 'We are good, sha sum check passed'
