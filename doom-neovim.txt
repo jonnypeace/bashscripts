@@ -1,0 +1,18 @@
+1. Install dependencies
+  
+  apt install nodejs npm unzip git curl
+
+2. then once npm is installed...
+  
+  npm install tree-sitter
+
+3. Install latest release as per instructions.
+  
+  https://github.com/doom-neovim/doom-nvim/releases
+  hint: install script provides some detail on dependencies
+  
+4. Install latest neovim as per instructions.
+
+  https://github.com/neovim/neovim/releases/tag/stable
+  sandbox error may occur due to manual installation. If unhappy with this, you could install neovim from repo,
+  and backtrack the doom-nvim to a version that is supported.
