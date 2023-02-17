@@ -39,3 +39,9 @@
     followed by
     :checkhealth nvim-treesitter
 
+6. configure auto-indent for 2 spaces
+
+  vim /home/jonny/.config/nvim/lua/doom/core/config.lua
+
+  Search for doom.indent. Immediately before, add a line...
+  doom.indent = 2 for 2 spaces 
