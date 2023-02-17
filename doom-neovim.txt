@@ -4,15 +4,38 @@
 
 2. then once npm is installed...
   
-  npm install tree-sitter
+  # npm install tree-sitter < This is buggy, and not global for my user
+  So instead visit https://github.com/tree-sitter/tree-sitter/releases
+  and (most recent release at this time)
+  wget https://github.com/tree-sitter/tree-sitter/releases/download/v0.20.7/tree-sitter-linux-x64.gz
+
+  I have a local .bin for my user, in my $HOME, so...
+  gunzip tree-sitter-linux-x64.gz > $HOME/.bin/tree-sitter
+
+  make sure $HOME/.bin is in your path. export PATH="$PATH:$HOME/.bin"
+  add this to your .bashrc 
 
 3. Install latest release as per instructions.
   
   https://github.com/doom-neovim/doom-nvim/releases
   hint: install script provides some detail on dependencies
+  wget https://raw.githubusercontent.com/doom-neovim/doom-nvim/main/tools/install.sh
   
 4. Install latest neovim as per instructions.
 
   https://github.com/neovim/neovim/releases/tag/stable
   sandbox error may occur due to manual installation. If unhappy with this, you could install neovim from repo,
   and backtrack the doom-nvim to a version that is supported.
+
+5. Install tree-sitter packages inside neovim
+
+    open neovim
+    nvim
+    nv
+    then use then
+    :TSInstall python lua vim bash
+    followed by
+    :TSUpdate
+    followed by
+    :checkhealth nvim-treesitter
+
