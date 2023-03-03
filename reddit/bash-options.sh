@@ -7,7 +7,7 @@
 # or with flags
 # ./script.sh -l -o 
 
-# Currently no commands really run, its an empty function to do as you please.
+# Currently no worthwhile commands really run, run_commands an empty function to do as you please.
 
 # Sense check
 function sense_check {
