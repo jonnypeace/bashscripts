@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# User on reddit looking for a way to run health checks on system
+# Author: Jonny Peace
+# run as....
+# ./script.sh
+# or with flags
+# ./script.sh -l -o 
+
+# Currently no commands really run, its an empty function to do as you please.
+
 # Sense check
 function sense_check {
   for i in "$@" ; do
@@ -39,6 +48,8 @@ input_tasks="$*"
 input_tasks="${input_tasks:-all}"
 
 # main function checking condition of boolean values above to run run_commands
+# Needs modified to suit user needs
+# echo commands are placeholders to show the script works
 function run_commands {
   if [[ ${flagTask[-s]} == True ]]; then
     echo 'apt update'
