@@ -1,0 +1,11 @@
+In /etc/fstab
+
+include this in the list of options
+
+noauto,x-systemd.automount,x-systemd.device-timeout=10,x-systemd.idle-timeout=30
+
+noauto                      = do not auto mount on boot
+x-systemd.automount         = Use systemd automount
+x-systemd.device-timeout=10 = If a network share thats down, don't get hung, timeout after 10seconds
+x-systemd.idle-timeout=60   = If device is not in use after 60s, unmount.
+
