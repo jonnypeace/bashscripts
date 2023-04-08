@@ -11,6 +11,7 @@
 
 # Sense check
 function sense_check {
+  [[ $@ == 'all' ]] && return
   set -- $@
   for i in "$@" ; do
     test=$(printf '%s' "$i" | wc -m)
