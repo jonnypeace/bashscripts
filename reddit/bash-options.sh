@@ -8,14 +8,17 @@
 # ./script.sh -l -o 
 
 # Currently no worthwhile commands really run, run_commands an empty function to do as you please.
+#
+flags='-s|-c|-v|-r|-l|-f|-a|-m|-o|-A'
 
 # Sense check
 function sense_check {
-  [[ $@ == 'all' ]] && return
+  [[ $* == 'all' ]] && return
+  # shellcheck disable=SC2068
   set -- $@
   for i in "$@" ; do
     test=$(printf '%s' "$i" | wc -m)
-    if (( test != 2 )) || [[ ! $i =~ -s|-c|-v|-r|-l|-f|-a|-m|-o|-A ]]; then
+    if (( test != 2 )) || [[ ! $i =~ $flags ]]; then
       echo "Failed sense check - incorrect flag = $i"
       exit
     fi
@@ -26,7 +29,7 @@ function sense_check {
 declare -A flagTask
 
 function all_true {
-  for i in -s -c -v -r -l -f -a -m -o -A; do
+  for i in ${flags//|/ }; do
     flagTask[$i]=True
   done
 }
@@ -46,7 +49,7 @@ flagInfo[-A]='ALL TASKS'
 
 # take flags as input from the commandline and process
 function parse_arg {
-  if [[ -n $@ ]]; then
+  if [[ -n $* ]]; then
     for i in "$@"; do
       if [[ ${#i} -gt 2 ]]; then
         while read -d '' -rn1 ans; do
