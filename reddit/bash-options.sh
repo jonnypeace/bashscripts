@@ -11,6 +11,7 @@
 
 # Sense check
 function sense_check {
+  set -- $@
   for i in "$@" ; do
     test=$(printf '%s' "$i" | wc -m)
     if (( test != 2 )) || [[ ! $i =~ -s|-c|-v|-r|-l|-f|-a|-m|-o|-A ]]; then
@@ -19,7 +20,6 @@ function sense_check {
     fi
   done
 }
-sense_check "$@"
 
 # build an array with boolean values
 declare -A flagTask
@@ -43,9 +43,24 @@ flagInfo[-m]='Drop memory cache/buffers'
 flagInfo[-o]='Optimize disk usage'
 flagInfo[-A]='ALL TASKS'
 
-# take flags as input from the commandline
-input_tasks="$*"
-input_tasks="${input_tasks:-all}"
+# take flags as input from the commandline and process
+function parse_arg {
+  if [[ -n $@ ]]; then
+    for i in "$@"; do
+      if [[ ${#i} -gt 2 ]]; then
+        while read -d '' -rn1 ans; do
+          if [[ $ans == '-' || ${#ans} == 0 ]]; then continue ; fi
+          input_tasks="$input_tasks -${ans/-/}"
+        done < <(printf '%s' "$i")
+      else
+        input_tasks="$input_tasks $i"
+      fi
+    done
+  fi
+  input_tasks="${input_tasks:-all}"
+  sense_check "$input_tasks"
+}
+parse_arg "$@"
 
 # main function checking condition of boolean values above to run run_commands
 # Needs modified to suit user needs
@@ -124,9 +139,10 @@ while true; do
 # Checking if happy with the selection, default is no
   if [[ ! ${ans:=N} =~ ^[yY][eE]?[sS]?$ ]]; then
     echo
-    read -rp 'Please enter new selection ' input_tasks
+    read -rp 'Please enter new selection ' new_tasks
     # shellcheck disable=SC2086
-    sense_check $input_tasks
+    unset input_tasks
+    parse_arg "$new_tasks"
     echo
     selected_flag
   else
