@@ -9,5 +9,5 @@ x-systemd.automount         = Use systemd automount
 x-systemd.device-timeout=10 = If a network share thats down, don't get hung, timeout after 10seconds
 x-systemd.idle-timeout=60   = If device is not in use after 60s, unmount.
 
-reboot or...
-systemctl daemon-reload && systemctl restart local-fs.target
+reboot (works) or...
+systemctl daemon-reload && systemctl restart local-fs.target (i've had issues getting this to work)
