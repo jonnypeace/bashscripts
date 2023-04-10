@@ -18,7 +18,7 @@ function choose_dir {
   cat << EOF | fzf -m --reverse > /tmp/file1
 exit
 $HOME/Music
-$HOME/git
+$HOME/Videos
 $HOME/Documents
 /sdcard
 EOF
@@ -28,10 +28,16 @@ EOF
 
 while true; do
   choose_dir
+  # in case yes is pressed without selection, truncate to be safe so rsync doesn't run
+  truncate -s 0 /tmp/select
   ssh "$remote_host" "find $(tr '\n' ' ' < /tmp/file1) -maxdepth 1" | \
     sort -f | fzf -m --reverse > /tmp/select
   exit_yes_no
   [[ $ans == 'yes' ]] && break
 done
+
+# exit if no selection
+check=$(< /tmp/select)
+[[ -z $check ]] && exit
 
 rsync -arvhz --progress --files-from=/tmp/select "$remote_host":/ ./backup
