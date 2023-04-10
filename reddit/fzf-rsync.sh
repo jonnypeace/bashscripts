@@ -24,6 +24,8 @@ $HOME/Documents
 EOF
   check=$(< /tmp/file1)
   [[ $check == 'exit' || -z $check ]] && exit
+  # help with whitespace fuzzy
+  sed -i 's/ /\\ /g' /tmp/file1
 }
 
 while true; do
@@ -40,4 +42,4 @@ done
 check=$(< /tmp/select)
 [[ -z $check ]] && exit
 
-rsync -arvhz --progress --files-from=/tmp/select "$remote_host":/ ./backup
+rsync -arvhzs --progress --files-from=/tmp/select "$remote_host":/ ./backup
