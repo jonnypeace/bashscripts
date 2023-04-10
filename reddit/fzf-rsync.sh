@@ -9,19 +9,21 @@ remote_host='ENTER REMOTE HOST HERE'
 function exit_yes_no {
   ans=$(printf '%s\n' "exit" "yes" "no" | \
     fzf --header="Please Select if you want to continue" --preview='cat /tmp/select') 
-  [[ $ans == 'exit' ]] && exit
+  [[ $ans == 'exit' || -z $ans ]] && exit
 }
 
 # Change directories to suit your needs
 function choose_dir {
+  truncate -s 0 /tmp/file1
   cat << EOF | fzf -m --reverse > /tmp/file1
 exit
 $HOME/Music
 $HOME/git
 $HOME/Documents
+/sdcard
 EOF
   check=$(< /tmp/file1)
-  [[ $check == 'exit' ]] && exit
+  [[ $check == 'exit' || -z $check ]] && exit
 }
 
 while true; do
