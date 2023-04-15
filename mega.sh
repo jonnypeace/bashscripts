@@ -23,6 +23,7 @@ elif [[ "$os_detail" == "Ubuntu" ]]
 then
 	os_query="sudo dpkg-query -W"
 	os_install="sudo apt install -y"
+	batcat=batcat
 fi
 
 if ! $os_query fzf > /dev/null 2>&1
