@@ -1,40 +1,46 @@
 #!/bin/bash
 
-#Quick script for synchronising backups, looking up drive health before it could potentially
-#write bad data and vice versa. I use this in a crontab which emails (you'll have to set that up manually)
-#the output. I set this up to run in crontab.
+# Create an array from smartmontools for reference of /dev/sda
+mapfile -t sda_health < <(sudo smartctl -a /dev/sda)
 
-###############################
-# AT PRESENT, THIS SCRIPT CHECKS A FEW ATTRIBUTES AND OVERALL HEALTH OF SATA DRIVES.
-###############################
+# declare associative arrays
+declare -A sda sdb
 
-# Checking health of drive sda
-a_pass=$(sudo smartctl -H /dev/sda | awk 'NR==5{print $6}')
-a_pend=$(sudo smartctl -A /dev/sda | awk '/Current_Pending_Sector/{print $10}')
-a_reall=$(sudo smartctl -A /dev/sda | awk '/Reallocated_Event_Count/{print $10}')
-a_uncor=$(sudo smartctl -A /dev/sda | awk '/Offline_Uncorrectable/{print $10}')
+# assign associative array with health info
+sda[pass]=$(awk '/overall-health/{print $6}' < <(printf '%s\n' "${sda_health[@]}"))
+sda[pend]=$(awk '/Current_Pending_Sector/{print $10}' < <(printf '%s\n' "${sda_health[@]}"))
+sda[reall]=$(awk '/Reallocated_Event_Count/{print $10}' < <(printf '%s\n' "${sda_health[@]}"))
+sda[uncor]=$(awk '/Offline_Uncorrectable/{print $10}' < <(printf '%s\n' "${sda_health[@]}"))
 
-# Checking health of drive sdb
-b_pass=$(sudo smartctl -H /dev/sdb | awk 'NR==5{print $6}')
-b_pend=$(sudo smartctl -A /dev/sdb | awk '/Current_Pending_Sector/{print $10}')
-b_reall=$(sudo smartctl -A /dev/sdb | awk '/Reallocated_Event_Count/{print $10}')
-b_uncor=$(sudo smartctl -A /dev/sdb | awk '/Offline_Uncorrectable/{print $10}')
+# Create an array from smartmontools for reference of /dev/sda
+mapfile -t sdb_health < <(sudo smartctl -a /dev/sdb)
 
-# Testing whether the drives are mounted
-testmount1=$(df -h | awk '/\/drive1/{print $6}')
-testmount2=$(df -h | awk '/\/drive2/{print $6}')
+# assign associative array with health info
+sdb[pass]=$(awk '/overall-health/{print $6}' < <(printf '%s\n' "${sdb_health[@]}"))
+sdb[pend]=$(awk '/Current_Pending_Sector/{print $10}' < <(printf '%s\n' "${sdb_health[@]}"))
+sdb[reall]=$(awk '/Reallocated_Event_Count/{print $10}' < <(printf '%s\n' "${sdb_health[@]}"))
+sdb[uncor]=$(awk '/Offline_Uncorrectable/{print $10}' < <(printf '%s\n' "${sdb_health[@]}"))
 
-# If drives are not mounted, script will exit.
-if [[ -e $testmount1 || -e $testmount2 ]] ; then
-  echo drive sda & sdb mounted and testing...
-# Checking drive health and attributes are in good condition  
-  if [[ $a_pass != PASSED || $a_pend != 0 || $a_reall != 0 || $a_uncor != 0 || $b_pass != PASSED || $b_pend != 0 || $b_reall != 0 || $b_uncor != 0 ]] ; then
-# If one of the drives does not conform to the above arguments, no rsync takes place
-    echo "Check drive health, might be time to replace one of the drives" ; else
-# If both drives pass the arguments, rsync will progress.
-# IMPORTANT when using rsync. Syntax for me works best like so.... rsync -options /drive1/ /drive2/ with the slash at the end of your mount point or directory.
+# Test mounts for both /dev/sda and sdb
+testmount1=$(df -h | awk '/\/3tb1/{print $6}')
+testmount2=$(df -h | awk '/\/3tb2/{print $6}')
+
+# if both drives are mounted, -n implies the variables contain a string...
+if [[ -n $testmount1 && -n $testmount2 ]] ; then
+
+  # Test health conditions for both drives... if drive is in poor health, dont sync.
+  # Allow user intervention to investigate data integrity and replace faulty drive.
+  
+  if [[ ${sda[pass]} != PASSED || ${sda[pend]} != 0 || ${sda[reall]} != 0 || ${sda[uncor]} != 0 ||
+          ${sdb[pass]} != PASSED || ${sdb[pend]} != 0 || ${sdb[reall]} != 0 || ${sdb[uncor]} != 0 ]] ; then
+
+    echo "Check drive health, might be time to replace one of the 3tb1 drives" 
+    exit 1
+  else
     echo "Syncing drives..."
-    rsync -avhrxH --delete /drive1/ /drive2/
-  fi ; else
+    rsync -avhrxH --delete --backup-dir=/3tb1/backup /3tb1/ /3tb2/
+  fi
+else
   echo "Check drives are mounted correctly, or if drives have failed"
+  exit 1
 fi
