@@ -13,6 +13,8 @@ server_ip_or_domain=''
 # Choose the dns for your client, below are quad DNS servers
 client_dns='9.9.9.9, 149.112.112.112'
 
+cd /etc/wireguard || echo 'Unable to switch to /etc/wireguard, are you root? Does directory exist? ' && exit 1
+
 if [[ ! -f privatekey && ! -f publickey ]] ; then
   umask 077; wg genkey | tee privatekey | wg pubkey > publickey
   echo 'Created new Server Keys'
