@@ -4,8 +4,12 @@
 #my wireguard uses the 10.6.0.0/24 subnet, so you'll have to update this accordingly.
 #to save myself some typing time, for the $num variable, i just increment by 1 and this is the last digit of the IP.
 #check the wg0.conf file to see which clients are using which IP's.
-#also update your endpoint ip address, or i use dynamic dns for this,line 38 
-#choose which DNS you'd like to use line 34
+
+# Update for server ip or domain.
+server_ip_or_domain=''
+
+# Choose the dns for your client
+client_dns='9.9.9.9'
 
 if [[ ! -f privatekey && ! -f publickey ]] ; then
   umask 077; wg genkey | tee privatekey | wg pubkey > publickey
@@ -27,7 +31,7 @@ fi
 read -rp "Warning, this script will halt your wireguard server while adding new users. Proceed? [y/N]? " ans
 mkdir -p /etc/wireguard/configs
 
-if [[ "$ans" =~ ^(yes|y)$ ]]; then
+if [[ ${ans,,} =~ ^(yes|y)$ ]]; then
 
 	systemctl stop wg-quick@wg0
 	read -rp "Enter peer name: " name
@@ -46,16 +50,16 @@ if [[ "$ans" =~ ^(yes|y)$ ]]; then
 	PrivateKey = $priv
 	Address = 10.6.0.$num/24
 	ListenPort = 51820
-	DNS = 9.9.9.9
+	DNS = $client_dns 
 	[Peer]
 	PublicKey = $server_pub
 	PresharedKey = $psk
-	Endpoint = MYDNS.ORMY.IP:51820
+	Endpoint = $server_ip_or_domain:51820
 	AllowedIPs = 0.0.0.0/0, ::0/0
 	PersistentKeepalive = 25
 	EOF
 
-	pub=$(cat "$name"_pub)
+	pub=$(< "$name"_pub)
 
 	cat <<- EOF >> /etc/wireguard/wg0.conf
 	###$name###
