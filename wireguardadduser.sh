@@ -91,7 +91,7 @@ fi
 #		:POSTROUTING ACCEPT [0:0]
 
 #		# Forward traffic from wg0 through eth0.
-#		-A POSTROUTING -s 10.10.10.0/24 -o eth0 -j MASQUERADE
+#		-A POSTROUTING -s 10.6.0.0/24 -o eth0 -j MASQUERADE
 
 #		#don't delete the 'COMMIT' line or these nat table rules won't be processed
 #		COMMIT
