@@ -5,6 +5,8 @@
 #to save myself some typing time, for the $num variable, i just increment by 1 and this is the last digit of the IP.
 #check the wg0.conf file to see which clients are using which IP's.
 
+# Only run this script in the /etc/wireguard directory, as relative paths are assumed.
+
 # Update for server ip or domain.
 server_ip_or_domain=''
 
