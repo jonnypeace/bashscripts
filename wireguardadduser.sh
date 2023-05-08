@@ -8,8 +8,8 @@
 # Update for server ip or domain.
 server_ip_or_domain=''
 
-# Choose the dns for your client
-client_dns='9.9.9.9'
+# Choose the dns for your client, below are quad DNS servers
+client_dns='9.9.9.9, 149.112.112.112'
 
 if [[ ! -f privatekey && ! -f publickey ]] ; then
   umask 077; wg genkey | tee privatekey | wg pubkey > publickey
