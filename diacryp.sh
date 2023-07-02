@@ -1,116 +1,108 @@
 #!/bin/bash
 
-#temporary files for redirecting stderr info, plenty of excess in case this grows
-temp1=$(mktemp -t test1.XXXXXX)
-temp2=$(mktemp -t test2.XXXXXX)
-temp3=$(mktemp -t test3.XXXXXX)
-temp4=$(mktemp -t test4.XXXXXX)
-temp5=$(mktemp -t test5.XXXXXX)
-temp6=$(mktemp -t test6.XXXXXX)
-temp7=$(mktemp -t test7.XXXXXX)
-temp8=$(mktemp -t test8.XXXXXX)
-temp9=$(mktemp -t test9.XXXXXX)
+# defaults
+file_name='cryptofile'
+byte_size='1M'
+count_byte='1024'
+mapper='cryptofile'
+mount_point='/mnt/cryptofile'
 
 # create new encrypted file for mounting
 function createnew {
+  loc="$PWD"
+  local -a new_input
+  mapfile -t new_input <<< "$(dialog --no-shadow --title "Create New Crypto" \
+    --form "\nLocal file/mount can be called without full path ---- ctrl+c to leave" 30 0 10 \
+    "Encrpyted File Name" 1 1 "$file_name" 1 37 30 0 \
+    "byte size, i.e. 1M? (for dd)" 2 1 "$byte_size" 2 37 30 0 \
+    "Count, i.e. 1024 ? (for dd)" 3 1 "$count_byte" 3 37 30 0 \
+    "/dev/mapper/pathname i.e secret" 4 1 "$mapper" 4 37 30 0 \
+    "Mount Point i.e. /mnt/crypto" 5 1 "$mount_point" 5 37 30 0 3>&1 1>&2 2>&3 3>&- )"
+  if [[ $? == 1 ]]; then return 1; fi
 
-loc=$(pwd)
+  enfile="${new_input[0]}"
+  bsize="${new_input[1]}"
+  count="${new_input[2]}"
+  secret="${new_input[3]}"
+  mount="${new_input[4]}"
 
-dialog --title "Create New Crypto" \
---form "\nLocal file/mount can be called without full path ---- ctrl+c to leave" 30 60 10 \
-  "Encrpyted File Name" 1 1 "" 1 37 15 50 \
-  "byte size, i.e. 1M? (for dd)" 2 1 "" 2 37 15 50 \
-  "Count, i.e. 1024 ? (for dd)" 3 1 "" 3 37 15 50 \
-  "/dev/mapper/pathname i.e secret" 4 1 "" 4 37 15 50 \
-  "Mount Point i.e. /mnt/crypto" 5 1 "" 5 37 15 50 \
-2>"$temp2"
-if [ $? == 1 ]; then return 1; fi
-
-enfile=$(awk 'NR==1{print}' "$temp2")
-bsize=$(awk 'NR==2{print}' "$temp2")
-count=$(awk 'NR==3{print}' "$temp2")
-secret=$(awk 'NR==4{print}' "$temp2")
-mount=$(awk 'NR==5{print}' "$temp2")
-
-mkdir -p "$mount"
-clear
-echo "File creation in progress........."
-dd if=/dev/zero of="$enfile" bs="$bsize" count="$count"
-cryptsetup luksFormat --cipher aes-xts-plain64 -s 512 "$enfile"
-echo
-echo "Please enter newly created password to mount file....."
-echo
-cryptsetup --verbose luksOpen "$loc"/"$enfile" "$secret"
-mkfs.ext4 /dev/mapper/"$secret"
-mount /dev/mapper/"$secret" "$mount"
-if [[ $? != 0 ]]; then
-  dialog --msgbox "Unable to proceed, check file location, are you sudo" 25 60; else
-  dialog --msgbox "File mounted in $mount/$enfile" 25 60
-fi
-
+  mkdir -p "$mount"
+  clear
+  echo "File creation in progress........."
+  dd if=/dev/zero of="$enfile" bs="$bsize" count="$count"
+  cryptsetup luksFormat --cipher aes-xts-plain64 -s 512 "$enfile"
+  echo
+  echo "Please enter newly created password to mount file....."
+  echo
+  cryptsetup --verbose luksOpen "$loc"/"$enfile" "$secret"
+  mkfs.ext4 /dev/mapper/"$secret"
+  mount /dev/mapper/"$secret" "$mount"
+  if [[ $? != 0 ]]; then
+    dialog --no-shadow --msgbox "Unable to proceed, check file location, are you sudo" 25 60; else
+    dialog --no-shadow --msgbox "File mounted in $mount/$enfile" 25 60
+  fi
 }
 
 # mount existing encrypted file as a directory
 function existcrypt {
 
-dialog --title "Mount Existing Crypto File" \
-  --form "\nLocal file/mount can be called without full path ---- ctrl+c to leave" 30 60 10 \
-  "File name or full path" 1 1 "" 1 37 15 50 \
-  "/dev/mapper/pathname i.e. secret" 2 1 "" 2 37 15 50 \
-  "Location for mount point" 3 1 "" 3 37 15 50 \
-2>"$temp2"
-if [ $? == 1 ]; then return 1; fi
+  local -a old_crypt
+  mapfile -t old_crypt <<< "$(dialog --no-shadow --title "Mount Existing Crypto File" \
+    --form "\nLocal file/mount can be called without full path ---- ctrl+c to leave" 30 0 10 \
+    "File name or full path" 1 1 "$file_name" 1 37 30 0 \
+    "/dev/mapper/pathname i.e. secret" 2 1 "$mapper" 2 37 30 0 \
+    "Location for mount point" 3 1 "$mount_point" 3 37 30 0 3>&1 1>&2 2>&3 3>&-)"
+  if [[ $? == 1 ]]; then return 1; fi
 
-enfile=$(awk 'NR==1{print}' "$temp2")
-secret=$(awk 'NR==2{print}' "$temp2")
-mount=$(awk 'NR==3{print}' "$temp2")
+  enfile="${old_crypt[0]}"
+  secret="${old_crypt[1]}"
+  mount="${old_crypt[2]}"
 
-mkdir -p "$mount"
+  mkdir -p "$mount"
 
-clear
-cryptsetup --verbose luksOpen "$enfile" "$secret"
-mount /dev/mapper/"$secret" "$mount"
-if [[ $? != 0 ]]; then
-  dialog --msgbox "Unable to proceed, check file location, are you sudo" 25 60; else
-  dialog --msgbox "File mounted in $mount/$enfile" 25 60
-fi
-
+  clear
+  cryptsetup --verbose luksOpen "$enfile" "$secret"
+  mount /dev/mapper/"$secret" "$mount"
+  if [[ $? != 0 ]]; then
+    dialog --no-shadow --msgbox "Unable to proceed, check file location, are you sudo" 25 60; else
+    dialog --no-shadow --msgbox "File mounted in $mount/$enfile" 25 60
+  fi
 }
 
 # unmount existing file/directory
 function unmount {
 
-dialog --title "Unmount Existing Crypto File" \
-  --form "\nLocal mount point can be called without full path ---- ctrl+c to leave" 30 60 10 \
-  "/dev/mapper/pathname i.e. secret" 1 1 "" 1 37 15 50 \
-  "Location for mount point" 2 1 "" 2 37 15 50 \
-2>"$temp2"
-if [ $? == 1 ]; then return 1; fi
+  local -a un_mount
+  mapfile -t un_mount <<< "$(dialog --no-shadow --title "Unmount Existing Crypto File" \
+    --form "\nLocal mount point can be called without full path ---- ctrl+c to leave" 30 0 10 \
+    "/dev/mapper/pathname i.e. secret" 1 1 "$mapper" 1 37 30 0 \
+    "Location for mount point" 2 1 "$mount_point" 2 37 30 0 3>&1 1>&2 2>&3 3>&-)"
+  if [[ $? == 1 ]]; then return 1; fi
 
-secret=$(awk 'NR==1{print}' "$temp2")
-mount=$(awk 'NR==2{print}' "$temp2")
+  secret="${un_mount[0]}"
+  mount="${un_mount[1]}"
 
-clear
-umount "$mount"
-cryptsetup --verbose luksClose "$secret"
+  clear
+  umount "$mount"
+  cryptsetup --verbose luksClose "$secret"
 
-if [[ $? != 0 ]]; then
-  dialog --msgbox "Unable to proceed, check file location, are you sudo" 25 60; else
-  dialog --msgbox "File has been unmounted" 25 60
-fi
-
+  if [[ $? != 0 ]]; then
+    dialog --no-shadow --msgbox "Unable to proceed, check file location, are you sudo" 25 60; else
+    dialog --no-shadow --msgbox "File has been unmounted" 25 60
+  fi
 }
+
 
 # while loop for main dialog window
 while true
-  do
-  dialog --no-shadow --menu "Crypto Files" 30 60 10 1 "Create New?" 2 "Mount Existing Crypto File?" 3 "Unmount?" 0 "Exit" 2>"$temp1"
-  #if [[ $? != 0 ]]
-  #then
-  #  break
-  #fi
+do
+  selection=$(dialog --no-shadow --menu \
+    "Crypto Files" 30 60 10 \
+    1 "Create New?" \
+    2 "Mount Existing Crypto File?" \
+    3 "Unmount?" \
+    0 "Exit" 3>&1 1>&2 2>&3 3>&-)
 
-  selection=$(cat "$temp1")
   case "$selection" in
   1)
     createnew ;;
@@ -126,16 +118,7 @@ while true
 done
 clear
 
-rm -f "$temp1" 2> /dev/null
-rm -f "$temp2" 2> /dev/null
-rm -f "$temp3" 2> /dev/null
-rm -f "$temp4" 2> /dev/null
-rm -f "$temp5" 2> /dev/null
-rm -f "$temp6" 2> /dev/null
-rm -f "$temp7" 2> /dev/null
-rm -f "$temp8" 2> /dev/null
-rm -f "$temp9" 2> /dev/null
-
+# FOR AUTOMOUNTING...
 #You need to make an appropriate entry in /etc/fstab. There is nothing special about this and it does not refer to encryption in any way. This can be as simple as:
 
 #/dev/mapper/SECRET /mnt ext4 defaults 0 0
