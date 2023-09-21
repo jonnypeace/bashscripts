@@ -83,7 +83,7 @@ from-file(){
 # from file input, case insensitive
 from-file-insensitive(){
     while IFS= read -r line; do
-        if [[ ${line,,} =~ ${1,,} ]]; then
+        if [[ ${line@L} =~ ${1@L} ]]; then
             if [[ $# == 2 ]]; then printf '%s\n' "$line"; continue ; fi
             for ((i=2; i<=$#-1; i++)); do
                 printf '%s\n' "${BASH_REMATCH[${!i}]}"
@@ -95,7 +95,7 @@ from-file-insensitive(){
 # from piped stdin case insensitive
 from-stdin-insensitive(){
     while IFS= read -r line; do
-        if [[ ${line,,} =~ ${1,,} ]]; then
+        if [[ ${line@L} =~ ${1@L} ]]; then
             if [[ $# == 1 ]]; then printf '%s\n' "$line"; continue ; fi
             for ((i=2; i<=$#; i++)); do
                 printf '%s\n' "${BASH_REMATCH[${!i}]}"
