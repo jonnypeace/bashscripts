@@ -60,6 +60,7 @@ fi
 from-stdin(){
     while IFS= read -r line; do
         if [[ $line =~ $1 ]]; then
+            if [[ $# == 1 ]]; then printf '%s\n' "$line"; continue ; fi
             for ((i=2; i<=$#; i++)); do
                 printf '%s\n' "${BASH_REMATCH[${!i}]}"
             done
@@ -95,6 +96,7 @@ from-file-insensitive(){
 from-stdin-insensitive(){
     while IFS= read -r line; do
         if [[ ${line,,} =~ ${1,,} ]]; then
+            if [[ $# == 1 ]]; then printf '%s\n' "$line"; continue ; fi
             for ((i=2; i<=$#; i++)); do
                 printf '%s\n' "${BASH_REMATCH[${!i}]}"
             done
