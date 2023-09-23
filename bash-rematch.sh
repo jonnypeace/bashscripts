@@ -58,7 +58,7 @@ fi
 
 # Takes in piped stdin 
 from-stdin(){
-    grep -E "$1" |
+    grep -E "$1" /dev/stdin |
     while IFS= read -r line; do
         if [[ $line =~ $1 ]]; then
             if [[ $# == 1 ]]; then printf '%s\n' "$line"; continue ; fi
@@ -99,7 +99,7 @@ from-file-insensitive(){
 
 # from piped stdin case insensitive
 from-stdin-insensitive(){
-    grep -iE "$1" |
+    grep -iE "$1" /dev/stdin |
     while IFS= read -r line; do
         if [[ ${line@L} =~ ${1@L} ]]; then
             if [[ $# == 1 ]]; then printf '%s\n' "$line"; continue ; fi
