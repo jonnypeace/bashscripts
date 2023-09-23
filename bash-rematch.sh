@@ -34,8 +34,16 @@ cat << EOF
     ./bash-rematch.sh -i "(cron).([0-9]*)\]" 0 /var/log/syslog              # with a -i or --insensitive, will convert to lowercase and match, but
                                                                               the output will also be lowercase. Might work depending on output required.
 
-    Warning:
+    Warning (Experimental):
 
+    Previous using pure bash, but i've included a common regex tool to help speed it up... grep. So far i've not seen a syntax issue using this.
+    I might make it optional if i find issues.
+
+
+    Pure bash
+    ---------
+
+    When using pure bash (in it's present form grep helps speed up times)
     Quite slow when not using files, when piping, or using redirection with process substitution. However, command substitution seems to work better.
     i.e. this works better than piping or process substitution..
 
