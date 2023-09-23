@@ -58,6 +58,7 @@ fi
 
 # Takes in piped stdin 
 from-stdin(){
+    grep -E "$1" |
     while IFS= read -r line; do
         if [[ $line =~ $1 ]]; then
             if [[ $# == 1 ]]; then printf '%s\n' "$line"; continue ; fi
@@ -70,6 +71,7 @@ from-stdin(){
 
 # Takes in a file as an arg.
 from-file(){
+    grep -E "$1" "${BASH_ARGV[0]}" |
     while IFS= read -r line; do
         if [[ $line =~ $1 ]]; then
             if [[ $# == 2 ]]; then printf '%s\n' "$line"; continue ; fi
@@ -77,11 +79,13 @@ from-file(){
                 printf '%s\n' "${BASH_REMATCH[${!i}]}"
             done
         fi
-    done < "${BASH_ARGV[0]}"
+    done
+    #done < "${BASH_ARGV[0]}"
 }
 
 # from file input, case insensitive
 from-file-insensitive(){
+    grep -iE "$1" "${BASH_ARGV[0]}" |
     while IFS= read -r line; do
         if [[ ${line@L} =~ ${1@L} ]]; then
             if [[ $# == 2 ]]; then printf '%s\n' "$line"; continue ; fi
@@ -89,11 +93,13 @@ from-file-insensitive(){
                 printf '%s\n' "${BASH_REMATCH[${!i}]}"
             done
         fi
-    done < "${BASH_ARGV[0]}"
+    done
+    #done < "${BASH_ARGV[0]}"
 }
 
 # from piped stdin case insensitive
 from-stdin-insensitive(){
+    grep -iE "$1" |
     while IFS= read -r line; do
         if [[ ${line@L} =~ ${1@L} ]]; then
             if [[ $# == 1 ]]; then printf '%s\n' "$line"; continue ; fi
