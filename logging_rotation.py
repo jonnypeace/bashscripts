@@ -9,7 +9,7 @@ def rotate_log_compression(log_file_path, threshold=100*1024*1024, backup_count=
     rotate_log_compression
     ----------------------
     
-    Instead of using RotatingFileHandle, which compresses the log files upon rotation.
+    This function is for use instead of RotatingFileHandle, which will compresses the log files upon rotation.
 
     In Windows, less so Linux I believe, the aim of this function is to be run at application startup,
     and if the threshold exceeds the threshold, rotate and compress to avoid file locks.
@@ -64,7 +64,30 @@ if not os.path.exists(log_path):
     os.makedirs(log_path, exist_ok=True)
 log_file_path: str = os.path.join(log_path, 'jplib.log')
 
-class IMP3Logs:
+class JPLogs:
+    '''
+    JPLogs
+    ------
+
+    This class sets up named loggers, avoiding the root logger.
+
+    This provides control for file handlers, and stream (std.out/error) handlers.
+
+    While the std.out and file handling are optional (but you should want one of them), the std.error handling is on by default. Will be monitoring this closely.
+
+    Args:
+    -----
+        level: logging level, default: logging.INFO
+        log_to_stdout: bool default: False
+        log_to_file: bool default: False
+        log_file: str default: log_file_path (variable in this script)
+
+    Useage:
+    -------
+        logger = JPLogs(level=logging.INFO,log_to_stdout=False,log_to_file=True,log_file=log_file_path) # Logs to file
+        logger = JPLogs(level=logging.INFO,log_to_stdout=True,log_to_file=False,log_file=log_file_path) # Logs to stdout
+        logger = JPLogs(level=logging.INFO,log_to_stdout=True,log_to_file=True,log_file=log_file_path) # Logs to file and stdout
+    '''
     def __init__(self, name=__name__,
                  level=logging.INFO,
                  log_to_stdout=False,
@@ -77,8 +100,10 @@ class IMP3Logs:
         self.logger: logging.Logger = logging.getLogger(self.name)
         self.logger.setLevel(self.level)
         self.logger.propagate = False
-
+                     
+        # Set up the file and stream handlers
         if log_to_stdout:
+            # Ensure no other self.logger handlers are StreamHandlers
             for handler in self.logger.handlers[:]:
                 if isinstance(handler, logging.StreamHandler):
                     self.logger.removeHandler(handler)
@@ -89,7 +114,6 @@ class IMP3Logs:
             }
             self.add_handler(logging.StreamHandler, stream_handler_config)
 
-        # Set up the file and stream handlers
         if log_to_file:
             file_handler_config = {
                 'init': {'filename': log_file},
@@ -126,7 +150,22 @@ class IMP3Logs:
         msg: str = f'{name}: {message}' if name is not None else message
         self.logger.warning(msg)
 
+    def critical(self, message, name=None):
+        msg: str = f'{name}: {message}' if name is not None else message
+        self.logger.critical(msg)
+
 def my_logger(orig_func):
+    '''
+    Simple wrapper function for functions/methods
+
+    Useage:
+    -------
+        @my_logger
+        def function_of_sorts(...):
+
+    Returns:
+        Information about the method/function called and reports whether it completes or any exceptions occured
+    '''
     log_instance = IMP3Logs(name=orig_func.__name__, log_to_file=True, log_to_stdout=False)
     @wraps(orig_func)
     def wrapper(*args, **kwargs):
