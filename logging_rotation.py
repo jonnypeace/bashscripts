@@ -6,7 +6,28 @@ import os, gzip, shutil
 
 def rotate_log_compression(log_file_path, threshold=100*1024*1024, backup_count=7):
     """
-    An extension of RotatingFileHandler that compresses the log files upon rotation.
+    rotate_log_compression
+    ----------------------
+    
+    Instead of using RotatingFileHandle, which compresses the log files upon rotation.
+
+    In Windows, less so Linux I believe, the aim of this function is to be run at application startup,
+    and if the threshold exceeds the threshold, rotate and compress to avoid file locks.
+
+    Useage:
+    -------
+        rotate_log_compression(log_file_path='/home/user/logs', threshold=100*1024*1024, backup_count=7)
+
+    Args:
+    -----
+        log_file_path: str
+            Where you want your log files to be
+        threshold: int
+            default=100*1024*1024 
+            My way of expressing 100MB. So files greater than 100MB will be rotated
+        backup_count: int
+            default=7
+            Number of gzip files to keep in rotation
     """
         
     if os.path.exists(log_file_path) and os.path.getsize(log_file_path) > threshold:
@@ -36,7 +57,8 @@ def rotate_log_compression(log_file_path, threshold=100*1024*1024, backup_count=
             os.remove(f"{oldest_backup}.gz")
 
 
-# Initial configuration call
+# Initial log file paths
+# defaults to root directory/log/jplib.log
 log_path: str = os.path.join(os.path.abspath(os.curdir), 'log')
 if not os.path.exists(log_path):
     os.makedirs(log_path, exist_ok=True)
