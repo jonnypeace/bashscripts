@@ -156,7 +156,7 @@ class JPLogs:
 
 def my_logger(orig_func):
     '''
-    Simple wrapper function for functions/methods
+    Simple wrapper function for functions/methods. I have this set to log to file, and not stdout. 
 
     Useage:
     -------
